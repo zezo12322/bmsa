@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# environment variables — NEVER commit real keys
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# testing / debug
+.playwright-mcp/
+
+# Claude Code local config
+.claude/
+
+# Python cache
+**/__pycache__/
+*.pyc
