@@ -71,7 +71,7 @@ create table if not exists public.bmsa_merch_items (
 
 create table if not exists public.bmsa_board_members (
   id uuid primary key default gen_random_uuid(),
-  tier text not null check (tier in ('eb', 'to')),
+  tier text not null check (tier in ('eb', 'to', 'sdd')),
   position_title_en text not null,
   position_title_ar text,
   role_en text,
@@ -87,6 +87,13 @@ create table if not exists public.bmsa_board_members (
   updated_at timestamptz not null default now(),
   unique (tier, position_title_en)
 );
+
+-- Tiers: eb = Executive Board, to = Team of Officials (TO) Standing Committee
+-- Officers, sdd = Team of Officials (TO) Support Division Directors.
+-- Re-create the check so databases created before 'sdd' existed accept it.
+alter table public.bmsa_board_members drop constraint if exists bmsa_board_members_tier_check;
+alter table public.bmsa_board_members
+  add constraint bmsa_board_members_tier_check check (tier in ('eb', 'to', 'sdd'));
 
 create table if not exists public.bmsa_membership_applications (
   id uuid primary key default gen_random_uuid(),
@@ -484,6 +491,12 @@ set name_en        = excluded.name_en,
 
 -- ── Seed: board members ───────────────────────────────────────────────────────
 
+-- The Executive Board has exactly three positions. Remove positions that no
+-- longer exist so re-running this script corrects older databases.
+delete from public.bmsa_board_members
+where tier = 'eb'
+  and position_title_en not in ('President', 'Vice President', 'Secretary General');
+
 insert into public.bmsa_board_members
   (tier, position_title_en, position_title_ar, role_en, role_ar, member_name_en, member_name_ar, gradient, sort_order)
 values
@@ -495,53 +508,84 @@ values
     'linear-gradient(135deg,#c0392b,#e15a4a)', 1
   ),
   (
-    'eb', 'Vice President for Internal Affairs', 'نائب الرئيس للشؤون الداخلية',
+    'eb', 'Vice President', 'نائب الرئيس',
     'Executive Board', 'المجلس التنفيذي',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#922b21,#c0392b)', 2
   ),
   (
-    'eb', 'Vice President for External Affairs', 'نائب الرئيس للشؤون الخارجية',
+    'eb', 'Secretary General', 'الأمين العام',
     'Executive Board', 'المجلس التنفيذي',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#b7950b,#d4ac0d)', 3
   ),
-  -- Technical Officers
+  -- Team of Officials (TO): Standing Committee Officers
   (
     'to', 'SCOME Officer', 'مسؤول SCOME',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#2f9e44,#69db7c)', 4
   ),
   (
     'to', 'SCOPE Officer', 'مسؤول SCOPE',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#1864ab,#4dabf7)', 5
   ),
   (
     'to', 'SCOPH Officer', 'مسؤول SCOPH',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#d6336c,#f783ac)', 6
   ),
   (
     'to', 'SCORA Officer', 'مسؤول SCORA',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#862e9c,#cc5de8)', 7
   ),
   (
     'to', 'SCORE Officer', 'مسؤول SCORE',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#e67700,#ffa94d)', 8
   ),
   (
     'to', 'SCORP Officer', 'مسؤول SCORP',
-    'Technical Officer', 'مسؤول تقني',
+    'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
     'linear-gradient(135deg,#495057,#adb5bd)', 9
+  ),
+  -- Team of Officials (TO): Support Division Directors
+  (
+    'sdd', 'CBSD Director', 'مدير CBSD',
+    'Support Division Director', 'مدير قسم دعم',
+    'TBD', 'يُعلن لاحقاً',
+    'linear-gradient(135deg,#1e1e17,#5c5c4f)', 10
+  ),
+  (
+    'sdd', 'PSD Director', 'مدير PSD',
+    'Support Division Director', 'مدير قسم دعم',
+    'TBD', 'يُعلن لاحقاً',
+    'linear-gradient(135deg,#107a72,#3fb8ae)', 11
+  ),
+  (
+    'sdd', 'PNSD Director', 'مدير PNSD',
+    'Support Division Director', 'مدير قسم دعم',
+    'TBD', 'يُعلن لاحقاً',
+    'linear-gradient(135deg,#9f1547,#d9487d)', 12
+  ),
+  (
+    'sdd', 'FSD Director', 'مدير FSD',
+    'Support Division Director', 'مدير قسم دعم',
+    'TBD', 'يُعلن لاحقاً',
+    'linear-gradient(135deg,#8b4514,#c7783f)', 13
+  ),
+  (
+    'sdd', 'RSD Director', 'مدير RSD',
+    'Support Division Director', 'مدير قسم دعم',
+    'TBD', 'يُعلن لاحقاً',
+    'linear-gradient(135deg,#c9920e,#f7b826)', 14
   )
 on conflict (tier, position_title_en) do update
 set position_title_ar = excluded.position_title_ar,

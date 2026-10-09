@@ -77,7 +77,7 @@ export const adminResources: Record<string, AdminResource> = {
   board: {
     key: 'board',
     title: 'Board Members',
-    description: 'Executive Board and Technical Officers shown on the About page.',
+    description: 'Executive Board and Team of Officials (TO) shown on the About page.',
     table: 'bmsa_board_members',
     titleField: 'position_title_en',
     subtitleField: 'tier',
@@ -89,7 +89,8 @@ export const adminResources: Record<string, AdminResource> = {
         required: true,
         options: [
           { label: 'Executive Board', value: 'eb' },
-          { label: 'Technical Officers', value: 'to' },
+          { label: 'TO: Standing Committee Officers', value: 'to' },
+          { label: 'TO: Support Division Directors', value: 'sdd' },
         ],
       },
       { name: 'position_title_en', label: 'Position EN', type: 'text', required: true },

@@ -15,6 +15,7 @@ import {
   FlaskConical,
   GraduationCap,
   HeartPulse,
+  Layers,
   Plane,
   Scale,
   Shirt,
@@ -704,14 +705,15 @@ function ActivityGrid({ locale, activities }: { locale: Locale; activities: Bmsa
 
 function BoardSection({ locale, content }: { locale: Locale; content: BmsaContent }) {
   const eb = content.boardMembers.filter((member) => member.tier === 'eb');
-  const to = content.boardMembers.filter((member) => member.tier === 'to');
+  const officers = content.boardMembers.filter((member) => member.tier === 'to');
+  const directors = content.boardMembers.filter((member) => member.tier === 'sdd');
 
   return (
     <section className="site-section">
       <div className="site-container">
         <SectionHeader
           eyebrow={locale === 'ar' ? 'الفريق' : 'Team'}
-          title={locale === 'ar' ? 'المجلس التنفيذي والمسؤولون التقنيون' : 'Executive Board and Technical Officers'}
+          title={locale === 'ar' ? 'المجلس التنفيذي وفريق المسؤولين (TO)' : 'Executive Board and Team of Officials (TO)'}
           lead={
             locale === 'ar'
               ? 'الأسماء والصور قابلة للتحديث من لوحة الإدارة كل عام.'
@@ -726,9 +728,15 @@ function BoardSection({ locale, content }: { locale: Locale; content: BmsaConten
             locale={locale}
           />
           <BoardTier
-            title={locale === 'ar' ? 'المسؤولون التقنيون' : 'Technical Officers'}
+            title={locale === 'ar' ? 'فريق المسؤولين (TO): مسؤولو اللجان الدائمة' : 'Team of Officials (TO): Standing Committee Officers'}
             icon={GraduationCap}
-            members={to}
+            members={officers}
+            locale={locale}
+          />
+          <BoardTier
+            title={locale === 'ar' ? 'فريق المسؤولين (TO): مديرو أقسام الدعم' : 'Team of Officials (TO): Support Division Directors'}
+            icon={Layers}
+            members={directors}
             locale={locale}
           />
         </div>
@@ -748,6 +756,8 @@ function BoardTier({
   members: BmsaContent['boardMembers'];
   locale: Locale;
 }) {
+  if (!members.length) return null;
+
   return (
     <div className="board-tier">
       <h3>

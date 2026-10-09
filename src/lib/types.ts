@@ -54,7 +54,7 @@ export type MerchItem = {
 
 export type BoardMember = {
   id?: string;
-  tier: 'eb' | 'to';
+  tier: 'eb' | 'to' | 'sdd';
   positionTitle: LocalizedText;
   role: LocalizedText;
   memberName: LocalizedText;

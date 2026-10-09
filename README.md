@@ -21,7 +21,7 @@ Official bilingual **Arabic/English** website and content management system for 
 
 **Public site (EN + AR)**
 - Home — hero, stats, committee overview, recent activities
-- About — mission/vision/values, journey timeline, board of directors
+- About — mission/vision/values, journey timeline, Executive Board and Team of Officials (TO)
 - Committees — SCOME, SCOPE, SCOPH, SCORA, SCORE, SCORP with programs
 - Divisions — CBSD, PSD, PNSD, FSD, RSD support divisions
 - Activities — CMS-managed activity cards per committee
@@ -66,6 +66,8 @@ npm install
 
 The script creates all tables, functions, RLS policies, indexes, triggers, a storage bucket, and inserts seed demo data. It is fully idempotent — safe to run multiple times.
 
+> **Existing databases:** to apply the current org structure (Executive Board + Team of Officials split into Standing Committee Officers and Support Division Directors) without re-seeding demo rows, run `supabase/migrations/20261009_org_structure.sql` instead.
+
 **What gets created:**
 
 | Object | Description |
@@ -73,7 +75,7 @@ The script creates all tables, functions, RLS policies, indexes, triggers, a sto
 | `admin_users` | Authorised admin accounts linked to Supabase Auth users |
 | `bmsa_activities` | CMS-managed activity cards (one per committee in seed data) |
 | `bmsa_merch_items` | Shop products with prices, sizes, availability |
-| `bmsa_board_members` | Executive Board + Technical Officers (9 roles in seed data) |
+| `bmsa_board_members` | Executive Board + Team of Officials (TO) (14 roles in seed data) |
 | `bmsa_images` | Global image URL overrides keyed by path |
 | `bmsa_membership_applications` | Join form submissions (5 demo rows) |
 | `bmsa_merch_orders` | Order form submissions (3 demo rows) |
@@ -224,7 +226,7 @@ supabase/
 | `admin_users` | Authorised admin accounts | None (admin-only) |
 | `bmsa_activities` | CMS-managed activity cards | Read published rows |
 | `bmsa_merch_items` | Shop products | Read published rows |
-| `bmsa_board_members` | EB and TO members | Read published rows |
+| `bmsa_board_members` | Executive Board (EB) and Team of Officials (TO) members | Read published rows |
 | `bmsa_images` | Centrally managed image URLs | Read published rows |
 | `bmsa_membership_applications` | Join form submissions | Insert only |
 | `bmsa_merch_orders` | Order form submissions | Insert only |
@@ -252,7 +254,7 @@ After running `bmsa_vibe_cms.sql` your database contains:
 
 - **6 activities** — one per committee (SCOME, SCORA, SCOPE, SCOPH, SCORE, SCORP), bilingual EN/AR
 - **4 merch items** — Hoodie (350 EGP), T-shirt (180 EGP), Lab Coat (450 EGP), Tote Bag (120 EGP)
-- **9 board members** — 3 EB (President, VP Internal, VP External) + 6 TOs (one per committee)
+- **14 board members** — 3 Executive Board (President, Vice President, Secretary General) + Team of Officials (TO): 6 Standing Committee Officers (one per committee) and 5 Support Division Directors (one per division)
 - **7 image override keys** — 4 logos + hero + about-team + about-history
 - **5 demo applications** + **3 demo orders** for testing the reports pages
 

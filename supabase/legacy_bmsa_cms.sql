@@ -96,7 +96,7 @@ create table if not exists public.bmsa_activities (
 
 create table if not exists public.bmsa_board_members (
   id uuid primary key default gen_random_uuid(),
-  tier text not null check (tier in ('eb', 'to')),
+  tier text not null check (tier in ('eb', 'to', 'sdd')),
   position_title_en text not null,
   position_title_ar text,
   role_en text,
