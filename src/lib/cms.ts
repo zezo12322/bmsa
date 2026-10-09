@@ -45,7 +45,7 @@ type CmsMerchRow = {
 
 type CmsBoardRow = {
   id: string;
-  tier: 'eb' | 'to';
+  tier: 'eb' | 'to' | 'sdd';
   position_title_en: string;
   position_title_ar: string | null;
   role_en: string | null;
