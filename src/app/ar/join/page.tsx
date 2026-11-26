@@ -1,6 +1,9 @@
 import SiteShell from '@/components/site/SiteShell';
 import { JoinPage } from '@/components/site/Pages';
 import { getBmsaContent } from '@/lib/cms';
+import { pageMetadata } from '@/lib/routes';
+
+export const metadata = pageMetadata('ar', 'join');
 
 export default async function Page({
   searchParams,

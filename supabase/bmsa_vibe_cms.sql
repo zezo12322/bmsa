@@ -542,13 +542,13 @@ values
     'to', 'SCORA Officer', 'مسؤول SCORA',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#862e9c,#cc5de8)', 7
+    'linear-gradient(135deg,#e8590c,#ff922b)', 7
   ),
   (
     'to', 'SCORE Officer', 'مسؤول SCORE',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#e67700,#ffa94d)', 8
+    'linear-gradient(135deg,#862e9c,#cc5de8)', 8
   ),
   (
     'to', 'SCORP Officer', 'مسؤول SCORP',

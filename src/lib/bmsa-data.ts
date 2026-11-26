@@ -8,6 +8,9 @@ export const siteCopy = {
     email: 'bmsa.benisuef@gmail.com',
     location: 'Faculty of Medicine, Beni Suef University, Egypt',
     facebook: 'https://www.facebook.com/BMSA.Egypt',
+    // Leave a social URL empty to hide its icon in the footer.
+    instagram: '',
+    linkedin: '',
     heroTitle: 'Empowering medical students in Beni Suef',
     heroLead:
       'A student-led medical association creating exchange, education, research, public health, and advocacy opportunities for future doctors.',
@@ -36,6 +39,8 @@ export const siteCopy = {
     email: 'bmsa.benisuef@gmail.com',
     location: 'كلية الطب، جامعة بني سويف، مصر',
     facebook: 'https://www.facebook.com/BMSA.Egypt',
+    instagram: '',
+    linkedin: '',
     heroTitle: 'نمكّن طلاب الطب في بني سويف',
     heroLead:
       'جمعية طلابية طبية تفتح فرص التبادل، التعليم الطبي، البحث العلمي، الصحة العامة، والمناصرة لأطباء المستقبل.',
@@ -480,7 +485,7 @@ export const boardMembers: BoardMember[] = [
   {
     tier: 'eb',
     positionTitle: { en: 'President', ar: 'الرئيس' },
-    role: { en: 'BMSA Benisuef', ar: 'بمسا بني سويف' },
+    role: { en: 'Executive Board', ar: 'المجلس التنفيذي' },
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
@@ -544,7 +549,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#862e9c,#cc5de8)',
+    gradient: 'linear-gradient(135deg,#e8590c,#ff922b)',
     sortOrder: 7,
   },
   {
@@ -554,7 +559,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#e67700,#ffa94d)',
+    gradient: 'linear-gradient(135deg,#862e9c,#cc5de8)',
     sortOrder: 8,
   },
   {

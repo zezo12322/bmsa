@@ -1,6 +1,9 @@
 import SiteShell from '@/components/site/SiteShell';
 import { MerchPage } from '@/components/site/Pages';
 import { getBmsaContent } from '@/lib/cms';
+import { pageMetadata } from '@/lib/routes';
+
+export const metadata = pageMetadata('ar', 'merch');
 
 export default async function Page({
   searchParams,

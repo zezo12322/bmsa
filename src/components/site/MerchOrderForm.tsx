@@ -21,12 +21,16 @@ export default function MerchOrderForm({
   locale,
   items,
   labels,
+  initialSlug = '',
 }: {
   locale: Locale;
   items: MerchItem[];
   labels: Labels;
+  initialSlug?: string;
 }) {
-  const [selectedSlug, setSelectedSlug] = useState('');
+  const [selectedSlug, setSelectedSlug] = useState(() =>
+    items.some((item) => item.slug === initialSlug && item.inStock) ? initialSlug : '',
+  );
 
   const selectedItem = items.find((item) => item.slug === selectedSlug);
   const showSizes = Boolean(selectedItem?.hasSizes && selectedItem.sizes.length > 0);
@@ -43,7 +47,7 @@ export default function MerchOrderForm({
           value={selectedSlug}
           onChange={(e) => setSelectedSlug(e.target.value)}
         >
-          <option value="">{labels.product}</option>
+          <option value="">{locale === 'ar' ? 'اختر المنتج' : 'Choose a product'}</option>
           {items.map((item) => (
             <option key={item.slug} value={item.slug} disabled={!item.inStock}>
               {text(item.name, locale)}
@@ -53,10 +57,10 @@ export default function MerchOrderForm({
         </select>
       </label>
 
-      <label>
-        {labels.size}
-        {showSizes ? (
-          <select name="size">
+      {showSizes ? (
+        <label>
+          {labels.size}
+          <select name="size" required>
             <option value="">{locale === 'ar' ? 'اختر المقاس' : 'Choose size'}</option>
             {selectedItem!.sizes.map((size) => (
               <option key={size} value={size}>
@@ -64,10 +68,8 @@ export default function MerchOrderForm({
               </option>
             ))}
           </select>
-        ) : (
-          <input name="size" placeholder={locale === 'ar' ? 'S / M / L / XL' : 'S / M / L / XL'} />
-        )}
-      </label>
+        </label>
+      ) : null}
 
       <label>
         {labels.qty}
@@ -76,17 +78,17 @@ export default function MerchOrderForm({
 
       <label>
         {labels.name}
-        <input name="name" required />
+        <input name="name" autoComplete="name" required />
       </label>
 
       <label>
         {labels.phone}
-        <input name="phone" required />
+        <input name="phone" type="tel" inputMode="tel" autoComplete="tel" dir="ltr" required />
       </label>
 
       <label>
         {labels.email}
-        <input name="email" type="email" required />
+        <input name="email" type="email" autoComplete="email" dir="ltr" required />
       </label>
 
       <label>
