@@ -43,11 +43,11 @@ function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function DirectionIcon({ locale }: { locale: Locale }) {
+export function DirectionIcon({ locale }: { locale: Locale }) {
   return locale === 'ar' ? <ArrowLeft size={17} /> : <ArrowRight size={17} />;
 }
 
-function SectionHeader({
+export function SectionHeader({
   eyebrow,
   title,
   lead,
@@ -65,7 +65,7 @@ function SectionHeader({
   );
 }
 
-function PageHero({
+export function PageHero({
   locale,
   title,
   lead,
@@ -128,7 +128,7 @@ function Notice({ locale, params, successKey }: { locale: Locale; params?: Notic
   );
 }
 
-function CtaBand({ locale }: { locale: Locale }) {
+export function CtaBand({ locale }: { locale: Locale }) {
   const copy = siteCopy[locale];
   return (
     <section className="cta-band">
@@ -262,6 +262,29 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
           <div className="section-action">
             <Link className="button secondary" href={href(locale, '/divisions')}>
               {locale === 'ar' ? 'اكتشف أقسام الدعم' : 'Explore support divisions'}
+              <DirectionIcon locale={locale} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="exchange-teaser">
+        <div className="site-container exchange-teaser-inner">
+          <div>
+            <span className="eyebrow">{locale === 'ar' ? 'التبادل الدولي' : 'Exchange'}</span>
+            <h2>{locale === 'ar' ? 'تدرّب في مستشفى أو معمل بحثي بالخارج' : 'Train in a hospital or research lab abroad'}</h2>
+            <p>
+              {locale === 'ar'
+                ? 'تبادل إكلينيكي مع SCOPE وبحثي مع SCORE عبر شبكة IFMSA. اعرف الخطوات، الوجهات، وتجارب الطلاب.'
+                : 'Clinical exchange with SCOPE and research exchange with SCORE through the IFMSA network. See the steps, destinations, and student stories.'}
+            </p>
+          </div>
+          <div className="exchange-teaser-side">
+            <span className="exchange-flags" aria-hidden="true">
+              {content.exchangeDestinations.slice(0, 6).map((destination) => destination.flag).join(' ')}
+            </span>
+            <Link className="button primary" href={href(locale, '/exchange')}>
+              {locale === 'ar' ? 'اكتشف التبادل' : 'Explore exchange'}
               <DirectionIcon locale={locale} />
             </Link>
           </div>
@@ -528,6 +551,11 @@ function UnitDetailList({
                     {count ? (
                       <Link className="text-link" href={`${href(locale, '/activities')}?committee=${unit.slug}`}>
                         {locale === 'ar' ? `أنشطة ${unit.name} (${count})` : `${unit.name} activities (${count})`}
+                      </Link>
+                    ) : null}
+                    {unit.slug === 'scope' || unit.slug === 'score' ? (
+                      <Link className="text-link" href={href(locale, '/exchange')}>
+                        {locale === 'ar' ? 'برنامج التبادل والوجهات' : 'Exchange program & destinations'}
                       </Link>
                     ) : null}
                   </div>

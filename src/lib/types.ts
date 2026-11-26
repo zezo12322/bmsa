@@ -68,12 +68,50 @@ export type BoardMember = {
   sortOrder: number;
 };
 
+export type ExchangeProgram = 'scope' | 'score';
+
+export type ExchangeRegion = 'europe' | 'americas' | 'asia' | 'africa' | 'middle-east' | 'oceania';
+
+export type ExchangeDestination = {
+  id?: string;
+  slug: string;
+  country: LocalizedText;
+  /** Emoji flag, e.g. 🇩🇪 */
+  flag: string;
+  region: ExchangeRegion;
+  /** Which programs this destination is offered in. */
+  programs: ExchangeProgram[];
+  cities: LocalizedText;
+  fields: LocalizedText;
+  language: LocalizedText;
+  notes: LocalizedText;
+  sortOrder: number;
+};
+
+export type ExchangeStory = {
+  id?: string;
+  slug: string;
+  studentName: LocalizedText;
+  academicYear: LocalizedText;
+  program: ExchangeProgram;
+  country: LocalizedText;
+  flag: string;
+  host: LocalizedText;
+  period: LocalizedText;
+  quote: LocalizedText;
+  story: LocalizedText;
+  imageUrl?: string | null;
+  sortOrder: number;
+};
+
 export type BmsaContent = {
   committees: Committee[];
   divisions: Division[];
   activities: Activity[];
   merchItems: MerchItem[];
   boardMembers: BoardMember[];
+  exchangeDestinations: ExchangeDestination[];
+  exchangeStories: ExchangeStory[];
   images: Record<string, string>;
 };
 

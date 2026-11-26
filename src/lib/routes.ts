@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Locale } from './types';
 
-export type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'merch' | 'join';
+export type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'exchange' | 'merch' | 'join';
 
 export const pagePaths: Record<PageKey, string> = {
   home: '/',
@@ -9,6 +9,7 @@ export const pagePaths: Record<PageKey, string> = {
   committees: '/committees',
   divisions: '/divisions',
   activities: '/activities',
+  exchange: '/exchange',
   merch: '/merch',
   join: '/join',
 };
@@ -46,6 +47,11 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
       title: 'Activities',
       description: 'Campaigns, workshops, and exchanges run by BMSA Benisuef committees.',
     },
+    exchange: {
+      title: 'Exchange Programs',
+      description:
+        'Clinical (SCOPE) and research (SCORE) exchanges abroad with BMSA Benisuef: how it works, destinations, student stories, and FAQs.',
+    },
     merch: {
       title: 'Merch Store',
       description: 'Order BMSA Benisuef hoodies, T-shirts, lab coats, and more.',
@@ -76,6 +82,11 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
     activities: {
       title: 'الأنشطة',
       description: 'حملات وورش وبرامج تبادل تنفذها لجان بمسا بني سويف.',
+    },
+    exchange: {
+      title: 'التبادل الدولي',
+      description:
+        'التبادل الإكلينيكي (SCOPE) والبحثي (SCORE) مع بمسا بني سويف: خطوات التقديم، الوجهات، تجارب الطلاب، والأسئلة الشائعة.',
     },
     merch: {
       title: 'المتجر',

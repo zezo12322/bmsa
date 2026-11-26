@@ -1,6 +1,15 @@
 import { cache } from 'react';
 import { fallbackContent } from './bmsa-data';
-import type { Activity, BoardMember, BmsaContent, MerchItem } from './types';
+import type {
+  Activity,
+  BoardMember,
+  BmsaContent,
+  ExchangeDestination,
+  ExchangeProgram,
+  ExchangeRegion,
+  ExchangeStory,
+  MerchItem,
+} from './types';
 import { createPublicSupabaseClient } from '@/utils/supabase/public';
 
 type CmsImageRow = {
@@ -55,6 +64,48 @@ type CmsBoardRow = {
   image_url: string | null;
   icon: string | null;
   gradient: string | null;
+  sort_order: number | null;
+};
+
+type CmsDestinationRow = {
+  id: string;
+  slug: string;
+  country_en: string;
+  country_ar: string | null;
+  flag: string | null;
+  region: string | null;
+  exchange_type: string | null;
+  cities_en: string | null;
+  cities_ar: string | null;
+  fields_en: string | null;
+  fields_ar: string | null;
+  language_en: string | null;
+  language_ar: string | null;
+  notes_en: string | null;
+  notes_ar: string | null;
+  sort_order: number | null;
+};
+
+type CmsStoryRow = {
+  id: string;
+  slug: string;
+  student_name_en: string;
+  student_name_ar: string | null;
+  academic_year_en: string | null;
+  academic_year_ar: string | null;
+  exchange_type: string | null;
+  country_en: string | null;
+  country_ar: string | null;
+  flag: string | null;
+  host_en: string | null;
+  host_ar: string | null;
+  period_en: string | null;
+  period_ar: string | null;
+  quote_en: string | null;
+  quote_ar: string | null;
+  story_en: string | null;
+  story_ar: string | null;
+  image_url: string | null;
   sort_order: number | null;
 };
 
@@ -141,6 +192,50 @@ function mapBoard(row: CmsBoardRow): BoardMember {
   };
 }
 
+/** Both languages, falling back to whichever one was filled in. */
+function bilingual(en: string | null | undefined, ar: string | null | undefined) {
+  const enText = en || ar || '';
+  return { en: enText, ar: ar || enText };
+}
+
+const REGIONS: ExchangeRegion[] = ['europe', 'americas', 'asia', 'africa', 'middle-east', 'oceania'];
+
+function mapDestination(row: CmsDestinationRow): ExchangeDestination {
+  const type = row.exchange_type || 'scope';
+  const programs: ExchangeProgram[] = type === 'both' ? ['scope', 'score'] : type === 'score' ? ['score'] : ['scope'];
+  return {
+    id: row.id,
+    slug: row.slug,
+    country: bilingual(row.country_en, row.country_ar),
+    flag: row.flag || '🌍',
+    region: REGIONS.includes(row.region as ExchangeRegion) ? (row.region as ExchangeRegion) : 'europe',
+    programs,
+    cities: bilingual(row.cities_en, row.cities_ar),
+    fields: bilingual(row.fields_en, row.fields_ar),
+    language: bilingual(row.language_en, row.language_ar),
+    notes: bilingual(row.notes_en, row.notes_ar),
+    sortOrder: row.sort_order || 0,
+  };
+}
+
+function mapStory(row: CmsStoryRow): ExchangeStory {
+  return {
+    id: row.id,
+    slug: row.slug,
+    studentName: bilingual(row.student_name_en, row.student_name_ar),
+    academicYear: bilingual(row.academic_year_en, row.academic_year_ar),
+    program: row.exchange_type === 'score' ? 'score' : 'scope',
+    country: bilingual(row.country_en, row.country_ar),
+    flag: row.flag || '🌍',
+    host: bilingual(row.host_en, row.host_ar),
+    period: bilingual(row.period_en, row.period_ar),
+    quote: bilingual(row.quote_en, row.quote_ar),
+    story: bilingual(row.story_en, row.story_ar),
+    imageUrl: assetUrl(row.image_url),
+    sortOrder: row.sort_order || 0,
+  };
+}
+
 async function getPublishedRows<T>(table: string) {
   const supabase = createPublicSupabaseClient();
   if (!supabase) return [];
@@ -161,11 +256,13 @@ async function getPublishedRows<T>(table: string) {
 }
 
 export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
-  const [imageRows, activityRows, merchRows, boardRows] = await Promise.all([
+  const [imageRows, activityRows, merchRows, boardRows, destinationRows, storyRows] = await Promise.all([
     getPublishedRows<CmsImageRow>('bmsa_images'),
     getPublishedRows<CmsActivityRow>('bmsa_activities'),
     getPublishedRows<CmsMerchRow>('bmsa_merch_items'),
     getPublishedRows<CmsBoardRow>('bmsa_board_members'),
+    getPublishedRows<CmsDestinationRow>('bmsa_exchange_destinations'),
+    getPublishedRows<CmsStoryRow>('bmsa_exchange_stories'),
   ]);
 
   return {
@@ -174,6 +271,8 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     activities: activityRows.length ? activityRows.map(mapActivity) : fallbackContent.activities,
     merchItems: merchRows.length ? merchRows.map(mapMerch) : fallbackContent.merchItems,
     boardMembers: boardRows.length ? boardRows.map(mapBoard) : fallbackContent.boardMembers,
+    exchangeDestinations: destinationRows.length ? destinationRows.map(mapDestination) : fallbackContent.exchangeDestinations,
+    exchangeStories: storyRows.length ? storyRows.map(mapStory) : fallbackContent.exchangeStories,
     images: imageMap(imageRows),
   };
 });

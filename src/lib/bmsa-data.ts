@@ -1,4 +1,4 @@
-import type { Activity, BoardMember, BmsaContent, Committee, Division, MerchItem } from './types';
+import type { Activity, BoardMember, BmsaContent, Committee, Division, ExchangeDestination, ExchangeStory, MerchItem } from './types';
 
 export const siteCopy = {
   en: {
@@ -22,6 +22,7 @@ export const siteCopy = {
       committees: 'Committees',
       divisions: 'Divisions',
       activities: 'Activities',
+      exchange: 'Exchange',
       merch: 'Merch',
       join: 'Join',
     },
@@ -52,6 +53,7 @@ export const siteCopy = {
       committees: 'اللجان',
       divisions: 'الأقسام',
       activities: 'الأنشطة',
+      exchange: 'التبادل',
       merch: 'المتجر',
       join: 'انضم',
     },
@@ -688,11 +690,119 @@ export const boardMembers: BoardMember[] = [
   },
 ];
 
+/**
+ * Example destinations shown until real ones are added in the admin panel
+ * (Admin → Exchange Destinations). Availability changes every exchange cycle.
+ */
+export const exchangeDestinations: ExchangeDestination[] = [
+  {
+    slug: 'germany',
+    country: { en: 'Germany', ar: 'ألمانيا' },
+    flag: '🇩🇪',
+    region: 'europe',
+    programs: ['scope'],
+    cities: { en: 'Various university hospitals', ar: 'مستشفيات جامعية مختلفة' },
+    fields: { en: 'Internal medicine, surgery, pediatrics, and more', ar: 'الباطنة، الجراحة، الأطفال، والمزيد' },
+    language: { en: 'English; basic German is a big plus', ar: 'الإنجليزية، ومعرفة أساسيات الألمانية ميزة كبيرة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 1,
+  },
+  {
+    slug: 'poland',
+    country: { en: 'Poland', ar: 'بولندا' },
+    flag: '🇵🇱',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Several university cities', ar: 'عدة مدن جامعية' },
+    fields: { en: 'Clinical departments and research labs', ar: 'أقسام إكلينيكية ومعامل بحثية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 2,
+  },
+  {
+    slug: 'czechia',
+    country: { en: 'Czechia', ar: 'التشيك' },
+    flag: '🇨🇿',
+    region: 'europe',
+    programs: ['scope'],
+    cities: { en: 'Prague and other cities', ar: 'براغ ومدن أخرى' },
+    fields: { en: 'Clinical clerkships across major specialties', ar: 'تدريب إكلينيكي في التخصصات الرئيسية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 3,
+  },
+  {
+    slug: 'portugal',
+    country: { en: 'Portugal', ar: 'البرتغال' },
+    flag: '🇵🇹',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Lisbon, Porto, and more', ar: 'لشبونة وبورتو والمزيد' },
+    fields: { en: 'Clinical departments and research projects', ar: 'أقسام إكلينيكية ومشاريع بحثية' },
+    language: { en: 'English; Portuguese helpful', ar: 'الإنجليزية، والبرتغالية مفيدة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 4,
+  },
+  {
+    slug: 'brazil',
+    country: { en: 'Brazil', ar: 'البرازيل' },
+    flag: '🇧🇷',
+    region: 'americas',
+    programs: ['scope', 'score'],
+    cities: { en: 'Many host cities', ar: 'مدن استضافة كثيرة' },
+    fields: { en: 'Clinical rotations and research projects', ar: 'دورات إكلينيكية ومشاريع بحثية' },
+    language: { en: 'English; Portuguese helpful', ar: 'الإنجليزية، والبرتغالية مفيدة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 5,
+  },
+  {
+    slug: 'indonesia',
+    country: { en: 'Indonesia', ar: 'إندونيسيا' },
+    flag: '🇮🇩',
+    region: 'asia',
+    programs: ['scope', 'score'],
+    cities: { en: 'Several host universities', ar: 'عدة جامعات مستضيفة' },
+    fields: { en: 'Clinical departments, public health, and research', ar: 'أقسام إكلينيكية، صحة عامة، وبحث علمي' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 6,
+  },
+  {
+    slug: 'tunisia',
+    country: { en: 'Tunisia', ar: 'تونس' },
+    flag: '🇹🇳',
+    region: 'africa',
+    programs: ['scope'],
+    cities: { en: 'Tunis and other cities', ar: 'تونس العاصمة ومدن أخرى' },
+    fields: { en: 'Clinical clerkships', ar: 'تدريب إكلينيكي' },
+    language: { en: 'French or Arabic; English in some departments', ar: 'الفرنسية أو العربية، والإنجليزية في بعض الأقسام' },
+    notes: { en: '', ar: '' },
+    sortOrder: 7,
+  },
+  {
+    slug: 'turkiye',
+    country: { en: 'Türkiye', ar: 'تركيا' },
+    flag: '🇹🇷',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Istanbul, Ankara, and more', ar: 'إسطنبول وأنقرة والمزيد' },
+    fields: { en: 'Clinical departments and research labs', ar: 'أقسام إكلينيكية ومعامل بحثية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 8,
+  },
+];
+
+/** Exchange stories are added from the admin panel (Admin → Exchange Stories); none are invented here. */
+export const exchangeStories: ExchangeStory[] = [];
+
 export const fallbackContent: BmsaContent = {
   committees,
   divisions,
   activities,
   merchItems,
   boardMembers,
+  exchangeDestinations,
+  exchangeStories,
   images: {},
 };
