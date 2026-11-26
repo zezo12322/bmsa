@@ -4,6 +4,7 @@ import type {
   Activity,
   BoardMember,
   BmsaContent,
+  ExchangeCall,
   ExchangeDestination,
   ExchangeProgram,
   ExchangeRegion,
@@ -107,6 +108,17 @@ type CmsStoryRow = {
   story_ar: string | null;
   image_url: string | null;
   sort_order: number | null;
+};
+
+type CmsCallRow = {
+  id: string;
+  title_en: string;
+  title_ar: string | null;
+  exchange_type: string | null;
+  opens_at: string;
+  closes_at: string;
+  details_en: string | null;
+  details_ar: string | null;
 };
 
 function assetUrl(value?: string | null) {
@@ -236,6 +248,18 @@ function mapStory(row: CmsStoryRow): ExchangeStory {
   };
 }
 
+function mapCall(row: CmsCallRow): ExchangeCall {
+  const type = row.exchange_type;
+  return {
+    id: row.id,
+    title: bilingual(row.title_en, row.title_ar),
+    program: type === 'score' || type === 'both' ? type : 'scope',
+    opensAt: row.opens_at,
+    closesAt: row.closes_at,
+    details: bilingual(row.details_en, row.details_ar),
+  };
+}
+
 async function getPublishedRows<T>(table: string) {
   const supabase = createPublicSupabaseClient();
   if (!supabase) return [];
@@ -256,13 +280,14 @@ async function getPublishedRows<T>(table: string) {
 }
 
 export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
-  const [imageRows, activityRows, merchRows, boardRows, destinationRows, storyRows] = await Promise.all([
+  const [imageRows, activityRows, merchRows, boardRows, destinationRows, storyRows, callRows] = await Promise.all([
     getPublishedRows<CmsImageRow>('bmsa_images'),
     getPublishedRows<CmsActivityRow>('bmsa_activities'),
     getPublishedRows<CmsMerchRow>('bmsa_merch_items'),
     getPublishedRows<CmsBoardRow>('bmsa_board_members'),
     getPublishedRows<CmsDestinationRow>('bmsa_exchange_destinations'),
     getPublishedRows<CmsStoryRow>('bmsa_exchange_stories'),
+    getPublishedRows<CmsCallRow>('bmsa_exchange_calls'),
   ]);
 
   return {
@@ -273,6 +298,7 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     boardMembers: boardRows.length ? boardRows.map(mapBoard) : fallbackContent.boardMembers,
     exchangeDestinations: destinationRows.length ? destinationRows.map(mapDestination) : fallbackContent.exchangeDestinations,
     exchangeStories: storyRows.length ? storyRows.map(mapStory) : fallbackContent.exchangeStories,
+    exchangeCalls: callRows.length ? callRows.map(mapCall) : fallbackContent.exchangeCalls,
     images: imageMap(imageRows),
   };
 });

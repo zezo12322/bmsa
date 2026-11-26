@@ -29,6 +29,9 @@ export default function AdminNav() {
       <Link href="/admin/applications" className={isActive('/admin/applications') ? 'active' : ''}>
         Applications
       </Link>
+      <Link href="/admin/exchange-applications" className={isActive('/admin/exchange-applications') ? 'active' : ''}>
+        Exchange Applications
+      </Link>
       <Link href="/admin/orders" className={isActive('/admin/orders') ? 'active' : ''}>
         Orders
       </Link>

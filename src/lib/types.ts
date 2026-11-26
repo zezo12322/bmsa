@@ -104,6 +104,17 @@ export type ExchangeStory = {
   sortOrder: number;
 };
 
+export type ExchangeCall = {
+  id?: string;
+  title: LocalizedText;
+  /** Which program the call is for. */
+  program: ExchangeProgram | 'both';
+  /** ISO timestamps (UTC). */
+  opensAt: string;
+  closesAt: string;
+  details: LocalizedText;
+};
+
 export type BmsaContent = {
   committees: Committee[];
   divisions: Division[];
@@ -112,6 +123,7 @@ export type BmsaContent = {
   boardMembers: BoardMember[];
   exchangeDestinations: ExchangeDestination[];
   exchangeStories: ExchangeStory[];
+  exchangeCalls: ExchangeCall[];
   images: Record<string, string>;
 };
 

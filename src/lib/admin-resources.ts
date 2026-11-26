@@ -1,7 +1,8 @@
 export type AdminField = {
   name: string;
   label: string;
-  type: 'text' | 'textarea' | 'checkbox' | 'number' | 'select';
+  /** `datetime` is entered in Egypt time and stored as a UTC timestamp. */
+  type: 'text' | 'textarea' | 'checkbox' | 'number' | 'select' | 'datetime';
   required?: boolean;
   helper?: string;
   options?: { label: string; value: string }[];
@@ -105,6 +106,36 @@ export const adminResources: Record<string, AdminResource> = {
       { name: 'image_url', label: 'Photo URL', type: 'text' },
       { name: 'icon', label: 'Icon', type: 'text' },
       { name: 'gradient', label: 'Gradient CSS', type: 'text' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'published', label: 'Published', type: 'checkbox' },
+    ],
+  },
+  'exchange-calls': {
+    key: 'exchange-calls',
+    title: 'Exchange Calls',
+    description:
+      'Application windows for exchange. The Exchange page and home page count down to the next opening, then to the closing date. Pre-applications are linked to the call that is open when they are sent.',
+    table: 'bmsa_exchange_calls',
+    titleField: 'title_en',
+    subtitleField: 'exchange_type',
+    fields: [
+      { name: 'title_en', label: 'Title EN', type: 'text', required: true, helper: 'e.g. Summer 2027 exchange call' },
+      { name: 'title_ar', label: 'Title AR', type: 'text' },
+      {
+        name: 'exchange_type',
+        label: 'Program',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'SCOPE (clinical)', value: 'scope' },
+          { label: 'SCORE (research)', value: 'score' },
+          { label: 'Both', value: 'both' },
+        ],
+      },
+      { name: 'opens_at', label: 'Applications open', type: 'datetime', required: true, helper: 'Egypt time (Cairo).' },
+      { name: 'closes_at', label: 'Applications close', type: 'datetime', required: true, helper: 'Egypt time (Cairo). Must be after the opening time.' },
+      { name: 'details_en', label: 'Details EN', type: 'textarea', helper: 'Optional short note shown under the countdown, e.g. eligibility or info session date.' },
+      { name: 'details_ar', label: 'Details AR', type: 'textarea' },
       { name: 'sort_order', label: 'Sort order', type: 'number' },
       { name: 'published', label: 'Published', type: 'checkbox' },
     ],

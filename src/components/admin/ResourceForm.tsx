@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { AdminField, AdminResource } from '@/lib/admin-resources';
 import { saveResource } from '@/app/admin/actions';
+import { isoToCairoLocal } from '@/lib/cairo-time';
 
 type AdminRow = Record<string, string | number | boolean | string[] | null | undefined> & {
   id?: string;
@@ -11,6 +12,7 @@ function fieldValue(item: AdminRow | undefined, field: AdminField) {
   const value = item[field.name];
   if (Array.isArray(value)) return value.join('\n');
   if (field.type === 'checkbox') return Boolean(value);
+  if (field.type === 'datetime') return isoToCairoLocal(typeof value === 'string' ? value : null);
   return value ?? '';
 }
 
@@ -59,6 +61,8 @@ export default function ResourceForm({
                     <input name={field.name} type="checkbox" value="true" defaultChecked={item ? Boolean(value) : true} />
                     Enabled
                   </span>
+                ) : field.type === 'datetime' ? (
+                  <input name={field.name} type="datetime-local" defaultValue={String(value)} required={field.required} />
                 ) : (
                   <input
                     name={field.name}

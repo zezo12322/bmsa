@@ -14,6 +14,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import ExchangeDestinations, { ProgramBadge } from '@/components/site/ExchangeDestinations';
+import ExchangeCountdown from '@/components/site/ExchangeCountdown';
+import ExchangeApplicationForm from '@/components/site/ExchangeApplicationForm';
 import { CtaBand, DirectionIcon, PageHero, SectionHeader } from '@/components/site/Pages';
 import { siteCopy } from '@/lib/bmsa-data';
 import { localizePath } from '@/lib/routes';
@@ -218,9 +220,16 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
         <a href="#programs">{locale === 'ar' ? 'البرامج' : 'Programs'}</a>
         <a href="#how">{locale === 'ar' ? 'خطوات التقديم' : 'How it works'}</a>
         <a href="#destinations">{locale === 'ar' ? 'الوجهات' : 'Destinations'}</a>
+        <a href="#pre-apply">{locale === 'ar' ? 'التقديم المبدئي' : 'Pre-apply'}</a>
         <a href="#stories">{locale === 'ar' ? 'تجارب الطلاب' : 'Stories'}</a>
         <a href="#faq">{locale === 'ar' ? 'أسئلة شائعة' : 'FAQ'}</a>
       </nav>
+
+      {content.exchangeCalls.length ? (
+        <div className="site-container countdown-wrap">
+          <ExchangeCountdown locale={locale} calls={content.exchangeCalls} ctaHref="#pre-apply" />
+        </div>
+      ) : null}
 
       <section className="site-section tight-top" id="programs">
         <div className="site-container program-cards">
@@ -288,7 +297,51 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
         </div>
       </section>
 
-      <section className="site-section alt" id="stories">
+      <section className="site-section alt" id="pre-apply">
+        <div className="site-container join-layout">
+          <div>
+            <SectionHeader
+              eyebrow={locale === 'ar' ? 'التقديم المبدئي' : 'Pre-application'}
+              title={locale === 'ar' ? 'سجّل اهتمامك بالتبادل' : 'Tell us you want to go'}
+              lead={
+                locale === 'ar'
+                  ? 'التقديم المبدئي بيساعد فريق SCOPE وSCORE يعرف عددكم واهتماماتكم، ويتواصل معاكم بالمواعيد والخطوات. ده مش التقديم الرسمي، وقبولك النهائي بيكون حسب معايير الاختيار.'
+                  : 'The pre-application helps the SCOPE and SCORE team know who is interested and contact you with dates and next steps. It is not the official application; final places follow the selection criteria.'
+              }
+            />
+            <ol className="steps-list">
+              {[
+                {
+                  title: locale === 'ar' ? 'ابعت الفورم' : 'Send the form',
+                  body: locale === 'ar' ? 'دقيقتين: بياناتك، البرنامج، والوجهات اللي بتفكر فيها.' : 'Two minutes: your details, the program, and destinations you are considering.',
+                },
+                {
+                  title: locale === 'ar' ? 'نتواصل معاك' : 'We contact you',
+                  body: locale === 'ar' ? 'هنبعتلك ميعاد جلسة التعريف وتفاصيل التقديم الرسمي.' : 'We send you the info session date and the details of the official application.',
+                },
+                {
+                  title: locale === 'ar' ? 'قدّم رسمياً' : 'Apply officially',
+                  body: locale === 'ar' ? 'لما الدعوة تفتح، كمّل التقديم الرسمي بالأوراق المطلوبة.' : 'When the call opens, complete the official application with the required documents.',
+                },
+              ].map((step, i) => (
+                <li key={step.title}>
+                  <span className="step-num">{i + 1}</span>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <aside className="form-card">
+            <h2>{locale === 'ar' ? 'التقديم المبدئي للتبادل' : 'Exchange pre-application'}</h2>
+            <ExchangeApplicationForm locale={locale} calls={content.exchangeCalls} destinations={content.exchangeDestinations} />
+          </aside>
+        </div>
+      </section>
+
+      <section className="site-section" id="stories">
         <div className="site-container">
           <SectionHeader
             eyebrow={locale === 'ar' ? 'تجارب الطلاب' : 'Exchange stories'}
@@ -330,7 +383,7 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
         </div>
       </section>
 
-      <section className="site-section">
+      <section className="site-section alt">
         <div className="site-container incoming">
           <Handshake size={34} aria-hidden="true" />
           <div>
@@ -349,7 +402,7 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
         </div>
       </section>
 
-      <section className="site-section alt" id="faq">
+      <section className="site-section" id="faq">
         <div className="site-container faq-layout">
           <SectionHeader
             eyebrow={locale === 'ar' ? 'أسئلة شائعة' : 'FAQ'}

@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import MerchOrderForm from '@/components/site/MerchOrderForm';
 import ActivityGrid, { activityHref } from '@/components/site/ActivityGrid';
 import ActivityBrowser from '@/components/site/ActivityBrowser';
+import ExchangeCountdown from '@/components/site/ExchangeCountdown';
 import { IconFor } from '@/components/site/icons';
 import {
   ArrowLeft,
@@ -278,6 +279,12 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
                 ? 'تبادل إكلينيكي مع SCOPE وبحثي مع SCORE عبر شبكة IFMSA. اعرف الخطوات، الوجهات، وتجارب الطلاب.'
                 : 'Clinical exchange with SCOPE and research exchange with SCORE through the IFMSA network. See the steps, destinations, and student stories.'}
             </p>
+            <ExchangeCountdown
+              locale={locale}
+              calls={content.exchangeCalls}
+              variant="compact"
+              ctaHref={`${href(locale, '/exchange')}#pre-apply`}
+            />
           </div>
           <div className="exchange-teaser-side">
             <span className="exchange-flags" aria-hidden="true">

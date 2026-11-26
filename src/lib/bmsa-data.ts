@@ -1,4 +1,14 @@
-import type { Activity, BoardMember, BmsaContent, Committee, Division, ExchangeDestination, ExchangeStory, MerchItem } from './types';
+import type {
+  Activity,
+  BoardMember,
+  BmsaContent,
+  Committee,
+  Division,
+  ExchangeCall,
+  ExchangeDestination,
+  ExchangeStory,
+  MerchItem,
+} from './types';
 
 export const siteCopy = {
   en: {
@@ -796,6 +806,9 @@ export const exchangeDestinations: ExchangeDestination[] = [
 /** Exchange stories are added from the admin panel (Admin → Exchange Stories); none are invented here. */
 export const exchangeStories: ExchangeStory[] = [];
 
+/** Application calls (with dates) are added in the admin panel (Admin → Exchange Calls); no dates are invented here. */
+export const exchangeCalls: ExchangeCall[] = [];
+
 export const fallbackContent: BmsaContent = {
   committees,
   divisions,
@@ -804,5 +817,6 @@ export const fallbackContent: BmsaContent = {
   boardMembers,
   exchangeDestinations,
   exchangeStories,
+  exchangeCalls,
   images: {},
 };

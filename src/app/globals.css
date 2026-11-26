@@ -2427,3 +2427,172 @@ button, input, select, textarea { font: inherit; }
   .exchange-teaser h2 { font-size: 1.6rem; }
 }
 .story-avatar span { font-size: 1.8rem; line-height: 1; }
+
+/* ── Exchange countdown ── */
+.countdown-wrap { padding-top: 24px; }
+.countdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px 32px;
+  align-items: center;
+  padding: 26px 30px;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  background: linear-gradient(120deg, #0b2a4a 0%, #1971c2 60%, #5f3dc4 100%);
+  box-shadow: var(--shadow);
+}
+.countdown.is-open { background: linear-gradient(120deg, #7f1f17 0%, #c0392b 60%, #e8590c 100%); }
+.countdown-info { display: grid; gap: 4px; }
+.countdown-status {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffd43b;
+}
+.countdown-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.countdown.is-open .countdown-dot { background: #8ce99a; box-shadow: 0 0 0 4px rgba(140, 233, 154, 0.25); }
+.countdown-program {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.countdown-title { font-size: 1.35rem; line-height: 1.3; font-weight: 900; }
+.countdown-heading { color: rgba(255, 255, 255, 0.82); font-weight: 600; }
+.countdown-units { display: flex; gap: 10px; direction: ltr; }
+.site-shell[dir='rtl'] .countdown-units { flex-direction: row-reverse; }
+.countdown-units span {
+  display: grid;
+  justify-items: center;
+  min-width: 74px;
+  padding: 10px 8px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.countdown-units strong { font-size: 2rem; line-height: 1.1; font-weight: 900; font-variant-numeric: tabular-nums; }
+.countdown-units small { font-size: 0.74rem; font-weight: 700; color: rgba(255, 255, 255, 0.78); }
+.countdown-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.countdown-meta > span { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+.countdown-meta p { flex-basis: 100%; order: 3; margin: 0; color: rgba(255, 255, 255, 0.8); font-size: 0.92rem; }
+.countdown-meta .button { margin-inline-start: auto; background: #fff; color: var(--primary-dark); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18); }
+
+/* compact variant inside the home exchange teaser (already on a blue band) */
+.countdown.compact {
+  margin-top: 20px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.countdown.compact .countdown-title { font-size: 1.05rem; }
+.countdown.compact .countdown-heading { font-size: 0.9rem; }
+.countdown.compact .countdown-units span { min-width: 60px; padding: 8px 6px; }
+.countdown.compact .countdown-units strong { font-size: 1.5rem; }
+.countdown.compact .countdown-meta { padding-top: 12px; font-size: 0.9rem; }
+
+/* ── Exchange pre-application form ── */
+.hp-field { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.form-callout {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.form-callout.open { background: #eaf7ef; color: #1b6f35; }
+
+.form-card fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 8px;
+}
+.form-card legend {
+  padding: 0;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.form-card .radio-group label,
+.form-card .destination-picker label,
+.form-card label.consent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.form-card .radio-group input,
+.form-card .destination-picker input,
+.form-card label.consent input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  padding: 0;
+  accent-color: var(--primary);
+}
+.form-card .radio-group label {
+  padding: 10px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  cursor: pointer;
+}
+.form-card .radio-group label:has(input:checked) { border-color: var(--primary); background: #fff5f4; }
+
+.destination-picker > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.form-card .destination-picker label {
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.form-card .destination-picker label.checked { border-color: var(--primary); background: #fff5f4; }
+.form-card .destination-picker label:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
+.picked-count { margin-inline-start: 6px; color: var(--primary); font-weight: 800; }
+.form-card label.consent { align-items: flex-start; font-size: 0.86rem; color: var(--muted); }
+.form-card label.consent input { margin-top: 2px; }
+.form-card button[disabled] { opacity: 0.7; cursor: wait; }
+
+.form-success { display: grid; justify-items: center; gap: 8px; padding: 18px 6px; text-align: center; }
+.form-success svg { color: #2f9e44; }
+.form-success h3 { margin: 0; font-size: 1.2rem; }
+.form-success p { margin: 0; color: var(--muted); }
+.form-success .button { margin-top: 10px; }
+
+@media (max-width: 1100px) {
+  .countdown { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .countdown { padding: 20px 16px; }
+  .countdown-units { gap: 6px; }
+  .countdown-units span { min-width: 0; flex: 1; }
+  .countdown-units strong { font-size: 1.6rem; }
+  .countdown-meta .button { width: 100%; margin-inline-start: 0; }
+  .form-row { grid-template-columns: 1fr; }
+}
