@@ -80,3 +80,85 @@ export async function submitMerchOrder(formData: FormData) {
 
   redirect(`${base}?ordered=1`);
 }
+
+export type ExchangeApplicationState = {
+  status: 'idle' | 'success' | 'error';
+  /** `cms` = submissions unavailable, `invalid` = missing/invalid fields, `submit` = database error. */
+  error?: 'cms' | 'invalid' | 'submit';
+  /** Set on success when the application was linked to an open call. */
+  callTitle?: { en: string; ar: string };
+};
+
+const EXCHANGE_PROGRAMS = ['scope', 'score', 'either'];
+const MEMBERSHIP_STATUSES = ['active', 'new', 'not-yet'];
+
+function limit(value: string, max: number) {
+  return value.length > max ? value.slice(0, max) : value;
+}
+
+export async function submitExchangeApplication(
+  _prev: ExchangeApplicationState,
+  formData: FormData,
+): Promise<ExchangeApplicationState> {
+  // Honeypot: real visitors never see or fill this field.
+  if (clean(formData.get('website'))) return { status: 'success' };
+
+  const supabase = createPublicSupabaseClient();
+  if (!supabase) return { status: 'error', error: 'cms' };
+
+  const destinations = formData
+    .getAll('preferred_destinations')
+    .map((value) => limit(String(value).trim(), 80))
+    .filter(Boolean)
+    .slice(0, 3);
+
+  const payload = {
+    name: limit(clean(formData.get('name')), 120),
+    email: limit(clean(formData.get('email')), 160),
+    phone: limit(clean(formData.get('phone')), 40),
+    faculty_year: limit(clean(formData.get('faculty_year')), 40),
+    membership_status: clean(formData.get('membership_status')),
+    program: clean(formData.get('program')),
+    preferred_destinations: destinations,
+    preferred_period: limit(clean(formData.get('preferred_period')), 120),
+    languages: limit(clean(formData.get('languages')), 200),
+    motivation: limit(clean(formData.get('motivation')), 3000),
+    locale: clean(formData.get('locale')) === 'ar' ? 'ar' : 'en',
+  };
+
+  if (
+    !payload.name ||
+    !payload.phone ||
+    !payload.faculty_year ||
+    !payload.motivation ||
+    !isValidEmail(payload.email) ||
+    !EXCHANGE_PROGRAMS.includes(payload.program) ||
+    !MEMBERSHIP_STATUSES.includes(payload.membership_status) ||
+    formData.get('consent') !== 'yes'
+  ) {
+    return { status: 'error', error: 'invalid' };
+  }
+
+  // Link the application to the call that is open right now (decided on the server, not the browser).
+  const now = new Date().toISOString();
+  const { data: openCalls } = await supabase
+    .from('bmsa_exchange_calls')
+    .select('id, title_en, title_ar')
+    .eq('published', true)
+    .lte('opens_at', now)
+    .gt('closes_at', now)
+    .order('closes_at', { ascending: true })
+    .limit(1);
+  const call = (openCalls as { id: string; title_en: string; title_ar: string | null }[] | null)?.[0];
+
+  const { error } = await supabase.from('bmsa_exchange_applications').insert({ ...payload, call_id: call?.id ?? null });
+  if (error) {
+    console.warn('Exchange application failed:', error.message);
+    return { status: 'error', error: 'submit' };
+  }
+
+  return {
+    status: 'success',
+    callTitle: call ? { en: call.title_en, ar: call.title_ar || call.title_en } : undefined,
+  };
+}

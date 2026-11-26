@@ -1,4 +1,14 @@
-import type { Activity, BoardMember, BmsaContent, Committee, Division, MerchItem } from './types';
+import type {
+  Activity,
+  BoardMember,
+  BmsaContent,
+  Committee,
+  Division,
+  ExchangeCall,
+  ExchangeDestination,
+  ExchangeStory,
+  MerchItem,
+} from './types';
 
 export const siteCopy = {
   en: {
@@ -8,6 +18,9 @@ export const siteCopy = {
     email: 'bmsa.benisuef@gmail.com',
     location: 'Faculty of Medicine, Beni Suef University, Egypt',
     facebook: 'https://www.facebook.com/BMSA.Egypt',
+    // Leave a social URL empty to hide its icon in the footer.
+    instagram: '',
+    linkedin: '',
     heroTitle: 'Empowering medical students in Beni Suef',
     heroLead:
       'A student-led medical association creating exchange, education, research, public health, and advocacy opportunities for future doctors.',
@@ -19,13 +32,14 @@ export const siteCopy = {
       committees: 'Committees',
       divisions: 'Divisions',
       activities: 'Activities',
+      exchange: 'Exchange',
       merch: 'Merch',
       join: 'Join',
     },
     stats: [
       ['500+', 'Active Members', 'Building tomorrow\'s physicians'],
       ['40+', 'Campaigns Launched', 'Public health & community impact'],
-      ['6', 'Standing Committees', 'Education, exchange, research & more'],
+      ['6 + 5', 'Committees & Divisions', '6 standing committees, 5 support divisions'],
       ['10+', 'Years of Impact', 'IFMSA-Egypt local committee'],
     ],
   },
@@ -36,6 +50,8 @@ export const siteCopy = {
     email: 'bmsa.benisuef@gmail.com',
     location: 'كلية الطب، جامعة بني سويف، مصر',
     facebook: 'https://www.facebook.com/BMSA.Egypt',
+    instagram: '',
+    linkedin: '',
     heroTitle: 'نمكّن طلاب الطب في بني سويف',
     heroLead:
       'جمعية طلابية طبية تفتح فرص التبادل، التعليم الطبي، البحث العلمي، الصحة العامة، والمناصرة لأطباء المستقبل.',
@@ -47,13 +63,14 @@ export const siteCopy = {
       committees: 'اللجان',
       divisions: 'الأقسام',
       activities: 'الأنشطة',
+      exchange: 'التبادل',
       merch: 'المتجر',
       join: 'انضم',
     },
     stats: [
       ['500+', 'عضو نشط', 'نبني أطباء الغد'],
       ['40+', 'حملة أُطلقت', 'صحة عامة وأثر مجتمعي'],
-      ['6', 'لجنة دائمة', 'تعليم، تبادل، بحث علمي والمزيد'],
+      ['6 + 5', 'لجان وأقسام', '6 لجان دائمة و5 أقسام دعم'],
       ['10+', 'عام من التأثير', 'لجنة محلية في IFMSA-Egypt'],
     ],
   },
@@ -193,6 +210,12 @@ export const divisions: Division[] = [
     },
     color: '#1e1e17',
     logo: '/images/logos/divisions/cbsd.png',
+    programs: [
+      { en: 'Soft Skills Trainings', ar: 'تدريبات المهارات الناعمة' },
+      { en: 'Training New Trainers (TNT)', ar: 'إعداد مدربين جدد (TNT)' },
+      { en: 'New Member Orientation', ar: 'تعريف الأعضاء الجدد' },
+      { en: 'Leadership Development', ar: 'تنمية المهارات القيادية' },
+    ],
   },
   {
     slug: 'psd',
@@ -204,6 +227,12 @@ export const divisions: Division[] = [
     },
     color: '#107a72',
     logo: '/images/logos/divisions/psd.png',
+    programs: [
+      { en: 'Project Design & Planning', ar: 'تصميم وتخطيط المشاريع' },
+      { en: 'Monitoring & Evaluation', ar: 'المتابعة والتقييم' },
+      { en: 'Proposal Review & Mentoring', ar: 'مراجعة المقترحات والإرشاد' },
+      { en: 'Impact Reporting', ar: 'تقارير الأثر' },
+    ],
   },
   {
     slug: 'pnsd',
@@ -215,6 +244,12 @@ export const divisions: Division[] = [
     },
     color: '#9f1547',
     logo: '/images/logos/divisions/pnsd.png',
+    programs: [
+      { en: 'Social Media & Content', ar: 'السوشيال ميديا وصناعة المحتوى' },
+      { en: 'Graphic Design & Visual Identity', ar: 'التصميم والهوية البصرية' },
+      { en: 'Photo & Video Coverage', ar: 'التصوير والتغطية بالفيديو' },
+      { en: 'Website & Digital Tools', ar: 'الموقع والأدوات الرقمية' },
+    ],
   },
   {
     slug: 'fsd',
@@ -226,6 +261,12 @@ export const divisions: Division[] = [
     },
     color: '#8b4514',
     logo: '/images/logos/divisions/fsd.png',
+    programs: [
+      { en: 'Sponsorships & Partnerships', ar: 'الرعايات والشراكات' },
+      { en: 'Fundraising Campaigns', ar: 'حملات جمع التبرعات' },
+      { en: 'BMSA Merch Store', ar: 'متجر بمسا' },
+      { en: 'Budgeting & Financial Planning', ar: 'الميزانيات والتخطيط المالي' },
+    ],
   },
   {
     slug: 'rsd',
@@ -237,6 +278,12 @@ export const divisions: Division[] = [
     },
     color: '#f7b826',
     logo: '/images/logos/divisions/rsd.png',
+    programs: [
+      { en: 'Research Mentorship', ar: 'الإرشاد البحثي' },
+      { en: 'Evidence-Based Medicine Sessions', ar: 'جلسات الطب المبني على الدليل' },
+      { en: 'Research Methodology Courses', ar: 'دورات منهجية البحث العلمي' },
+      { en: 'Open Science & Publishing', ar: 'العلم المفتوح والنشر' },
+    ],
   },
 ];
 
@@ -342,6 +389,40 @@ export const activities: Activity[] = [
     imageUrl: null,
     icon: 'scale',
     sortOrder: 6,
+  },
+  {
+    slug: 'soft-skills-training-day',
+    committee: 'cbsd',
+    title: { en: 'Soft Skills Training Day', ar: 'يوم تدريب المهارات الناعمة' },
+    excerpt: {
+      en: 'Communication, teamwork, and presentation trainings delivered by BMSA trainers.',
+      ar: 'تدريبات على التواصل والعمل الجماعي والعرض يقدمها مدربو بمسا.',
+    },
+    description: {
+      en: 'CBSD ran a full day of interactive trainings on communication, teamwork, time management, and presentation skills for new and returning members.',
+      ar: 'نظم CBSD يوماً كاملاً من التدريبات التفاعلية على التواصل والعمل الجماعي وإدارة الوقت ومهارات العرض للأعضاء الجدد والقدامى.',
+    },
+    tag: { en: 'CBSD - Capacity Building', ar: 'CBSD - بناء القدرات' },
+    imageUrl: null,
+    icon: 'presentation',
+    sortOrder: 7,
+  },
+  {
+    slug: 'content-creation-bootcamp',
+    committee: 'pnsd',
+    title: { en: 'Content Creation Bootcamp', ar: 'معسكر صناعة المحتوى' },
+    excerpt: {
+      en: 'Hands-on sessions on design, photography, and writing for health awareness content.',
+      ar: 'جلسات عملية في التصميم والتصوير والكتابة لمحتوى التوعية الصحية.',
+    },
+    description: {
+      en: 'PNSD trained members to plan, design, and publish accurate and engaging health awareness content for BMSA campaigns and social media.',
+      ar: 'درّب PNSD الأعضاء على تخطيط وتصميم ونشر محتوى توعية صحية دقيق وجذاب لحملات بمسا وحساباتها على السوشيال ميديا.',
+    },
+    tag: { en: 'PNSD - Media & Publications', ar: 'PNSD - الإعلام والمنشورات' },
+    imageUrl: null,
+    icon: 'camera',
+    sortOrder: 8,
   },
 ];
 
@@ -480,7 +561,7 @@ export const boardMembers: BoardMember[] = [
   {
     tier: 'eb',
     positionTitle: { en: 'President', ar: 'الرئيس' },
-    role: { en: 'BMSA Benisuef', ar: 'بمسا بني سويف' },
+    role: { en: 'Executive Board', ar: 'المجلس التنفيذي' },
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
@@ -544,7 +625,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#862e9c,#cc5de8)',
+    gradient: 'linear-gradient(135deg,#e8590c,#ff922b)',
     sortOrder: 7,
   },
   {
@@ -554,7 +635,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#e67700,#ffa94d)',
+    gradient: 'linear-gradient(135deg,#862e9c,#cc5de8)',
     sortOrder: 8,
   },
   {
@@ -619,11 +700,123 @@ export const boardMembers: BoardMember[] = [
   },
 ];
 
+/**
+ * Example destinations shown until real ones are added in the admin panel
+ * (Admin → Exchange Destinations). Availability changes every exchange cycle.
+ */
+export const exchangeDestinations: ExchangeDestination[] = [
+  {
+    slug: 'germany',
+    country: { en: 'Germany', ar: 'ألمانيا' },
+    flag: '🇩🇪',
+    region: 'europe',
+    programs: ['scope'],
+    cities: { en: 'Various university hospitals', ar: 'مستشفيات جامعية مختلفة' },
+    fields: { en: 'Internal medicine, surgery, pediatrics, and more', ar: 'الباطنة، الجراحة، الأطفال، والمزيد' },
+    language: { en: 'English; basic German is a big plus', ar: 'الإنجليزية، ومعرفة أساسيات الألمانية ميزة كبيرة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 1,
+  },
+  {
+    slug: 'poland',
+    country: { en: 'Poland', ar: 'بولندا' },
+    flag: '🇵🇱',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Several university cities', ar: 'عدة مدن جامعية' },
+    fields: { en: 'Clinical departments and research labs', ar: 'أقسام إكلينيكية ومعامل بحثية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 2,
+  },
+  {
+    slug: 'czechia',
+    country: { en: 'Czechia', ar: 'التشيك' },
+    flag: '🇨🇿',
+    region: 'europe',
+    programs: ['scope'],
+    cities: { en: 'Prague and other cities', ar: 'براغ ومدن أخرى' },
+    fields: { en: 'Clinical clerkships across major specialties', ar: 'تدريب إكلينيكي في التخصصات الرئيسية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 3,
+  },
+  {
+    slug: 'portugal',
+    country: { en: 'Portugal', ar: 'البرتغال' },
+    flag: '🇵🇹',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Lisbon, Porto, and more', ar: 'لشبونة وبورتو والمزيد' },
+    fields: { en: 'Clinical departments and research projects', ar: 'أقسام إكلينيكية ومشاريع بحثية' },
+    language: { en: 'English; Portuguese helpful', ar: 'الإنجليزية، والبرتغالية مفيدة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 4,
+  },
+  {
+    slug: 'brazil',
+    country: { en: 'Brazil', ar: 'البرازيل' },
+    flag: '🇧🇷',
+    region: 'americas',
+    programs: ['scope', 'score'],
+    cities: { en: 'Many host cities', ar: 'مدن استضافة كثيرة' },
+    fields: { en: 'Clinical rotations and research projects', ar: 'دورات إكلينيكية ومشاريع بحثية' },
+    language: { en: 'English; Portuguese helpful', ar: 'الإنجليزية، والبرتغالية مفيدة' },
+    notes: { en: '', ar: '' },
+    sortOrder: 5,
+  },
+  {
+    slug: 'indonesia',
+    country: { en: 'Indonesia', ar: 'إندونيسيا' },
+    flag: '🇮🇩',
+    region: 'asia',
+    programs: ['scope', 'score'],
+    cities: { en: 'Several host universities', ar: 'عدة جامعات مستضيفة' },
+    fields: { en: 'Clinical departments, public health, and research', ar: 'أقسام إكلينيكية، صحة عامة، وبحث علمي' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 6,
+  },
+  {
+    slug: 'tunisia',
+    country: { en: 'Tunisia', ar: 'تونس' },
+    flag: '🇹🇳',
+    region: 'africa',
+    programs: ['scope'],
+    cities: { en: 'Tunis and other cities', ar: 'تونس العاصمة ومدن أخرى' },
+    fields: { en: 'Clinical clerkships', ar: 'تدريب إكلينيكي' },
+    language: { en: 'French or Arabic; English in some departments', ar: 'الفرنسية أو العربية، والإنجليزية في بعض الأقسام' },
+    notes: { en: '', ar: '' },
+    sortOrder: 7,
+  },
+  {
+    slug: 'turkiye',
+    country: { en: 'Türkiye', ar: 'تركيا' },
+    flag: '🇹🇷',
+    region: 'europe',
+    programs: ['scope', 'score'],
+    cities: { en: 'Istanbul, Ankara, and more', ar: 'إسطنبول وأنقرة والمزيد' },
+    fields: { en: 'Clinical departments and research labs', ar: 'أقسام إكلينيكية ومعامل بحثية' },
+    language: { en: 'English', ar: 'الإنجليزية' },
+    notes: { en: '', ar: '' },
+    sortOrder: 8,
+  },
+];
+
+/** Exchange stories are added from the admin panel (Admin → Exchange Stories); none are invented here. */
+export const exchangeStories: ExchangeStory[] = [];
+
+/** Application calls (with dates) are added in the admin panel (Admin → Exchange Calls); no dates are invented here. */
+export const exchangeCalls: ExchangeCall[] = [];
+
 export const fallbackContent: BmsaContent = {
   committees,
   divisions,
   activities,
   merchItems,
   boardMembers,
+  exchangeDestinations,
+  exchangeStories,
+  exchangeCalls,
   images: {},
 };

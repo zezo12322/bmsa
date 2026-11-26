@@ -2,32 +2,32 @@
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import MerchOrderForm from '@/components/site/MerchOrderForm';
+import ActivityGrid, { activityHref } from '@/components/site/ActivityGrid';
+import ActivityBrowser from '@/components/site/ActivityBrowser';
+import ExchangeCountdown from '@/components/site/ExchangeCountdown';
+import { IconFor } from '@/components/site/icons';
 import {
   ArrowLeft,
   ArrowRight,
-  Badge,
-  BookOpen,
-  CalendarDays,
   CheckCircle2,
-  Coffee,
+  ClipboardList,
   Crown,
-  FilePenLine,
-  FlaskConical,
+  Eye,
   GraduationCap,
+  Gem,
   HeartPulse,
   Layers,
-  Plane,
-  Scale,
-  Shirt,
-  ShoppingBag,
-  Sparkles,
+  Mail,
+  MessageCircle,
   Stethoscope,
+  Target,
   UsersRound,
   type LucideIcon,
 } from 'lucide-react';
 import { siteCopy } from '@/lib/bmsa-data';
+import { localizePath } from '@/lib/routes';
 import { submitMembershipApplication } from '@/app/actions';
-import type { BmsaContent, Locale } from '@/lib/types';
+import type { Activity, BmsaContent, Locale, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
 
 type NoticeParams = Record<string, string | string[] | undefined>;
@@ -38,40 +38,17 @@ function safeGradient(value: string | null | undefined): CSSProperties['backgrou
   return SAFE_GRADIENT_RE.test(value.trim()) ? value : undefined;
 }
 
-const iconMap: Record<string, LucideIcon> = {
-  badge: Badge,
-  bag: ShoppingBag,
-  book: BookOpen,
-  'calendar-days': CalendarDays,
-  'file-pen': FilePenLine,
-  flask: FlaskConical,
-  'heart-pulse': HeartPulse,
-  mug: Coffee,
-  plane: Plane,
-  ribbon: Sparkles,
-  scale: Scale,
-  shirt: Shirt,
-  stethoscope: Stethoscope,
-  user: UsersRound,
-  users: UsersRound,
-  sparkles: Sparkles,
-};
+const href = localizePath;
 
-function IconFor({ name, size = 24 }: { name?: string | null; size?: number }) {
-  const Icon = iconMap[name || ''] || CalendarDays;
-  return <Icon size={size} />;
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
 }
 
-function href(locale: Locale, path: string) {
-  if (locale === 'ar') return path === '/' ? '/ar' : `/ar${path}`;
-  return path;
-}
-
-function DirectionIcon({ locale }: { locale: Locale }) {
+export function DirectionIcon({ locale }: { locale: Locale }) {
   return locale === 'ar' ? <ArrowLeft size={17} /> : <ArrowRight size={17} />;
 }
 
-function SectionHeader({
+export function SectionHeader({
   eyebrow,
   title,
   lead,
@@ -89,7 +66,7 @@ function SectionHeader({
   );
 }
 
-function PageHero({
+export function PageHero({
   locale,
   title,
   lead,
@@ -125,23 +102,58 @@ function Notice({ locale, params, successKey }: { locale: Locale; params?: Notic
 
   if (!hasSuccess && !hasError) return null;
 
+  const email = siteCopy[locale].email;
   const copy = {
     en: {
-      success: successKey === 'ordered' ? 'Your order request was received.' : 'Your application was submitted.',
-      cms: 'CMS is not configured yet. Add Supabase keys to enable submissions.',
-      submit: 'Submission failed. Please try again or contact BMSA directly.',
+      success:
+        successKey === 'ordered'
+          ? 'Thank you! Your order request was received. The team will contact you to confirm price and pickup.'
+          : 'Thank you! Your application was received. The team will review it and contact you soon.',
+      cms: `Online submissions are temporarily unavailable. Please email us at ${email}.`,
+      submit: `Something went wrong. Please check your details and try again, or email us at ${email}.`,
     },
     ar: {
-      success: successKey === 'ordered' ? 'تم استلام طلب المنتج.' : 'تم إرسال طلب الانضمام.',
-      cms: 'لم يتم إعداد CMS بعد. أضف مفاتيح Supabase لتفعيل الإرسال.',
-      submit: 'تعذر إرسال الطلب. حاول مرة أخرى أو تواصل مع بمسا مباشرة.',
+      success:
+        successKey === 'ordered'
+          ? 'شكراً! تم استلام طلبك، وسيتواصل معك الفريق لتأكيد السعر وموعد الاستلام.'
+          : 'شكراً! تم استلام طلب انضمامك، وسيراجعه الفريق ويتواصل معك قريباً.',
+      cms: `الإرسال الإلكتروني غير متاح مؤقتاً. راسلنا على ${email}.`,
+      submit: `حدث خطأ. راجع بياناتك وحاول مرة أخرى، أو راسلنا على ${email}.`,
     },
   }[locale];
 
   return (
-    <div className={hasSuccess ? 'form-notice success' : 'form-notice error'}>
+    <div className={hasSuccess ? 'form-notice success' : 'form-notice error'} role={hasSuccess ? 'status' : 'alert'}>
       {hasSuccess ? copy.success : params.error === 'cms' ? copy.cms : copy.submit}
     </div>
+  );
+}
+
+export function CtaBand({ locale }: { locale: Locale }) {
+  const copy = siteCopy[locale];
+  return (
+    <section className="cta-band">
+      <div className="site-container cta-band-inner">
+        <div>
+          <h2>{locale === 'ar' ? 'جاهز تبدأ رحلتك مع بمسا؟' : 'Ready to start your BMSA journey?'}</h2>
+          <p>
+            {locale === 'ar'
+              ? 'انضم لمئات من طلاب طب بني سويف واكتسب خبرة حقيقية في التعليم والبحث والصحة العامة والتبادل الدولي.'
+              : 'Join fellow Beni Suef medical students and gain real experience in education, research, public health, and international exchange.'}
+          </p>
+        </div>
+        <div className="cta-band-actions">
+          <Link className="button primary" href={href(locale, '/join')}>
+            {copy.joinCta}
+            <DirectionIcon locale={locale} />
+          </Link>
+          <a className="button ghost-on-dark" href={`mailto:${copy.email}`}>
+            <Mail size={17} />
+            {locale === 'ar' ? 'راسلنا' : 'Email us'}
+          </a>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -172,19 +184,44 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
           </div>
 
           <div className="hero-visual">
-            <img className="hero-logo" src="/images/logos/bmsa-logo-v.png" alt={copy.brand} />
-            <div className="orbit-grid" aria-hidden="true">
-              {content.committees.map((committee) => (
-                <span key={committee.slug} style={{ '--accent': committee.color } as CSSProperties}>
-                  <img src={committee.logo} alt="" />
-                </span>
-              ))}
+            <span className="hero-ring" aria-hidden="true" />
+            <div className="hero-logo">
+              <img src="/images/logos/bmsa-logo-v.png" alt={copy.brand} />
             </div>
+            <ul className="orbit-grid" aria-label={locale === 'ar' ? 'اللجان الدائمة' : 'Standing committees'}>
+              {content.committees.map((committee) => (
+                <li key={committee.slug} style={{ '--accent': committee.color } as CSSProperties}>
+                  <Link href={`${href(locale, '/committees')}#${committee.slug}`} aria-label={committee.name}>
+                    <img src={committee.logo} alt="" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+        </div>
+
+        <div className="site-container hero-divisions">
+          <span className="hero-divisions-label">
+            <Layers size={16} />
+            {locale === 'ar' ? 'أقسام الدعم' : 'Support divisions'}
+          </span>
+          <ul aria-label={locale === 'ar' ? 'أقسام الدعم' : 'Support divisions'}>
+            {content.divisions.map((division) => (
+              <li key={division.slug} style={{ '--accent': division.color } as CSSProperties}>
+                <Link
+                  href={`${href(locale, '/divisions')}#${division.slug}`}
+                  aria-label={`${division.name} — ${text(division.fullName, locale)}`}
+                  title={text(division.fullName, locale)}
+                >
+                  <img src={division.logo} alt="" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      <section className="stats-band">
+      <section className="stats-band" aria-label={locale === 'ar' ? 'أرقام' : 'Key numbers'}>
         <div className="site-container stats-grid">
           {copy.stats.map(([value, label, sublabel]) => (
             <div key={label}>
@@ -207,11 +244,61 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
                 : 'Each committee leads a different part of education, exchange, public health, research, and advocacy.'
             }
           />
-          <CommitteeGrid locale={locale} content={content} compact />
+          <UnitGrid locale={locale} units={content.committees} basePath="/committees" />
         </div>
       </section>
 
       <section className="site-section alt">
+        <div className="site-container">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}
+            title={locale === 'ar' ? 'خمسة أقسام تقف وراء كل مشروع' : 'Five divisions behind every project'}
+            lead={
+              locale === 'ar'
+                ? 'التدريب، تصميم المشاريع، الإعلام، التمويل، والبحث العلمي — أقسام تدعم كل اللجان وتفتح لك مسارات مختلفة للمشاركة.'
+                : 'Training, project design, media, fundraising, and research — divisions that support every committee and give you more ways to get involved.'
+            }
+          />
+          <UnitGrid locale={locale} units={content.divisions} basePath="/divisions" />
+          <div className="section-action">
+            <Link className="button secondary" href={href(locale, '/divisions')}>
+              {locale === 'ar' ? 'اكتشف أقسام الدعم' : 'Explore support divisions'}
+              <DirectionIcon locale={locale} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="exchange-teaser">
+        <div className="site-container exchange-teaser-inner">
+          <div>
+            <span className="eyebrow">{locale === 'ar' ? 'التبادل الدولي' : 'Exchange'}</span>
+            <h2>{locale === 'ar' ? 'تدرّب في مستشفى أو معمل بحثي بالخارج' : 'Train in a hospital or research lab abroad'}</h2>
+            <p>
+              {locale === 'ar'
+                ? 'تبادل إكلينيكي مع SCOPE وبحثي مع SCORE عبر شبكة IFMSA. اعرف الخطوات، الوجهات، وتجارب الطلاب.'
+                : 'Clinical exchange with SCOPE and research exchange with SCORE through the IFMSA network. See the steps, destinations, and student stories.'}
+            </p>
+            <ExchangeCountdown
+              locale={locale}
+              calls={content.exchangeCalls}
+              variant="compact"
+              ctaHref={`${href(locale, '/exchange')}#pre-apply`}
+            />
+          </div>
+          <div className="exchange-teaser-side">
+            <span className="exchange-flags" aria-hidden="true">
+              {content.exchangeDestinations.slice(0, 6).map((destination) => destination.flag).join(' ')}
+            </span>
+            <Link className="button primary" href={href(locale, '/exchange')}>
+              {locale === 'ar' ? 'اكتشف التبادل' : 'Explore exchange'}
+              <DirectionIcon locale={locale} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="site-section">
         <div className="site-container split-feature">
           <div>
             <SectionHeader
@@ -244,38 +331,69 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
             <h3>IFMSA-Egypt</h3>
             <p>
               {locale === 'ar'
-                ? 'جزء من أكبر اتحاد عالمي لطلاب الطب.'
-                : 'Part of the world’s largest federation of medical students.'}
+                ? 'جزء من الاتحاد الدولي لجمعيات طلاب الطب (IFMSA)، أكبر شبكة لطلاب الطب في العالم.'
+                : 'Part of the International Federation of Medical Students’ Associations (IFMSA), the world’s largest network of medical students.'}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="site-section">
-        <div className="site-container">
-          <SectionHeader
-            eyebrow={locale === 'ar' ? 'آخر الأنشطة' : 'Recent Activities'}
-            title={locale === 'ar' ? 'العمل على الأرض' : 'Work happening on the ground'}
-            lead={
-              locale === 'ar'
-                ? 'أمثلة من أنشطة اللجان، ويمكن تعديلها من لوحة الإدارة.'
-                : 'Examples of committee work, editable from the admin dashboard.'
-            }
-          />
-          <ActivityGrid locale={locale} activities={featuredActivities} />
-          <div className="section-action">
-            <Link className="button secondary" href={href(locale, '/activities')}>
-              {locale === 'ar' ? 'كل الأنشطة' : 'All activities'}
-              <DirectionIcon locale={locale} />
-            </Link>
+      {featuredActivities.length ? (
+        <section className="site-section alt">
+          <div className="site-container">
+            <SectionHeader
+              eyebrow={locale === 'ar' ? 'آخر الأنشطة' : 'Recent Activities'}
+              title={locale === 'ar' ? 'العمل على الأرض' : 'Work happening on the ground'}
+              lead={
+                locale === 'ar'
+                  ? 'لمحة من الحملات والورش وبرامج التبادل التي تنفذها لجاننا.'
+                  : 'A glimpse of the campaigns, workshops, and exchanges our committees run.'
+              }
+            />
+            <ActivityGrid locale={locale} activities={featuredActivities} units={[...content.committees, ...content.divisions]} />
+            <div className="section-action">
+              <Link className="button secondary" href={href(locale, '/activities')}>
+                {locale === 'ar' ? 'كل الأنشطة' : 'All activities'}
+                <DirectionIcon locale={locale} />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      <CtaBand locale={locale} />
     </main>
   );
 }
 
 export function AboutPage({ locale, content }: { locale: Locale; content: BmsaContent }) {
+  const pillars: { icon: LucideIcon; title: string; body: string }[] = [
+    {
+      icon: Target,
+      title: locale === 'ar' ? 'رسالتنا' : 'Mission',
+      body:
+        locale === 'ar'
+          ? 'تمكين طلاب الطب من المعرفة والمهارات والمسؤولية المجتمعية.'
+          : 'Empower medical students with knowledge, practical skills, and social responsibility.',
+    },
+    {
+      icon: Eye,
+      title: locale === 'ar' ? 'رؤيتنا' : 'Vision',
+      body:
+        locale === 'ar'
+          ? 'جيل من الأطباء القادة القادرين على خدمة مجتمعهم والتواصل عالمياً.'
+          : 'A generation of physician-leaders who serve locally and connect globally.',
+    },
+    {
+      icon: Gem,
+      title: locale === 'ar' ? 'قيمنا' : 'Values',
+      body:
+        locale === 'ar'
+          ? 'النزاهة، الدمج، الابتكار، الخدمة، والتعاون الدولي.'
+          : 'Integrity, inclusion, innovation, service, and international collaboration.',
+    },
+  ];
+
   return (
     <main>
       <PageHero
@@ -291,33 +409,11 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
 
       <section className="site-section">
         <div className="site-container cards-three">
-          {[
-            {
-              title: locale === 'ar' ? 'رسالتنا' : 'Mission',
-              body:
-                locale === 'ar'
-                  ? 'تمكين طلاب الطب من المعرفة والمهارات والمسؤولية المجتمعية.'
-                  : 'Empower medical students with knowledge, practical skills, and social responsibility.',
-            },
-            {
-              title: locale === 'ar' ? 'رؤيتنا' : 'Vision',
-              body:
-                locale === 'ar'
-                  ? 'جيل من الأطباء القادة القادرين على خدمة مجتمعهم والتواصل عالمياً.'
-                  : 'A generation of physician-leaders who serve locally and connect globally.',
-            },
-            {
-              title: locale === 'ar' ? 'قيمنا' : 'Values',
-              body:
-                locale === 'ar'
-                  ? 'النزاهة، الدمج، الابتكار، الخدمة، والتعاون الدولي.'
-                  : 'Integrity, inclusion, innovation, service, and international collaboration.',
-            },
-          ].map((card) => (
-            <article className="info-card" key={card.title}>
-              <Sparkles size={24} />
-              <h2>{card.title}</h2>
-              <p>{card.body}</p>
+          {pillars.map(({ icon: Icon, title, body }) => (
+            <article className="info-card" key={title}>
+              <Icon size={24} />
+              <h2>{title}</h2>
+              <p>{body}</p>
             </article>
           ))}
         </div>
@@ -330,9 +426,24 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
             title={locale === 'ar' ? 'نمو مستمر داخل الجامعة والمجتمع' : 'Growing inside the university and community'}
           />
           {[
-            [locale === 'ar' ? 'التأسيس' : 'Foundation', locale === 'ar' ? 'انطلاق اللجنة المحلية داخل كلية طب بني سويف.' : 'The local committee begins inside Beni Suef Faculty of Medicine.'],
-            [locale === 'ar' ? 'النمو' : 'Growth', locale === 'ar' ? 'توسع أنشطة اللجان وبرامج بناء القدرات.' : 'Committee activities and capacity-building programs expand.'],
-            [locale === 'ar' ? 'اليوم' : 'Today', locale === 'ar' ? 'نموذج أكثر تنظيماً مع CMS ولوحة إدارة للمحتوى.' : 'A more structured model with CMS-backed content and admin workflows.'],
+            [
+              locale === 'ar' ? 'التأسيس' : 'Foundation',
+              locale === 'ar'
+                ? 'انطلاق اللجنة المحلية داخل كلية طب بني سويف كجزء من IFMSA-Egypt.'
+                : 'The local committee begins inside Beni Suef Faculty of Medicine as part of IFMSA-Egypt.',
+            ],
+            [
+              locale === 'ar' ? 'النمو' : 'Growth',
+              locale === 'ar'
+                ? 'توسع أنشطة اللجان الست وانطلاق أقسام الدعم وبرامج بناء القدرات.'
+                : 'The six committees expand their work, and support divisions and capacity-building programs take shape.',
+            ],
+            [
+              locale === 'ar' ? 'اليوم' : 'Today',
+              locale === 'ar'
+                ? 'مئات الأعضاء، حملات صحية مستمرة، وفرص تبادل دولي كل عام.'
+                : 'Hundreds of members, ongoing health campaigns, and international exchange opportunities every year.',
+            ],
           ].map(([title, body]) => (
             <article key={title}>
               <span />
@@ -345,8 +456,165 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
         </div>
       </section>
 
+      <section className="site-section">
+        <div className="site-container">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'هيكلنا' : 'Our structure'}
+            title={locale === 'ar' ? 'كيف تعمل بمسا' : 'How BMSA is organized'}
+            lead={
+              locale === 'ar'
+                ? 'المجلس التنفيذي يقود، واللجان الدائمة تنفذ البرامج، وأقسام الدعم تمدّ الجميع بالتدريب والتصميم والتمويل والبحث.'
+                : 'The Executive Board leads, the standing committees run programs, and the support divisions power everyone with training, design, funding, and research.'
+            }
+          />
+          <div className="org-chart">
+            <div className="org-node org-eb">
+              <Crown size={20} />
+              <strong>{locale === 'ar' ? 'المجلس التنفيذي' : 'Executive Board'}</strong>
+              <span>{locale === 'ar' ? 'الرئيس، نائب الرئيس، الأمين العام' : 'President, Vice President, Secretary General'}</span>
+            </div>
+            <div className="org-branches">
+              <div className="org-node">
+                <strong>{locale === 'ar' ? '6 لجان دائمة' : '6 Standing Committees'}</strong>
+                <ul className="logo-cloud">
+                  {content.committees.map((unit) => (
+                    <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                      <Link href={`${href(locale, '/committees')}#${unit.slug}`} aria-label={unit.name}>
+                        <img src={unit.logo} alt="" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="org-node">
+                <strong>{locale === 'ar' ? '5 أقسام دعم' : '5 Support Divisions'}</strong>
+                <ul className="logo-cloud">
+                  {content.divisions.map((unit) => (
+                    <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                      <Link href={`${href(locale, '/divisions')}#${unit.slug}`} aria-label={unit.name}>
+                        <img src={unit.logo} alt="" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <BoardSection locale={locale} content={content} />
+      <CtaBand locale={locale} />
     </main>
+  );
+}
+
+function UnitDetailList({
+  locale,
+  units,
+  activities,
+  jumpLabel,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  activities: Activity[];
+  jumpLabel: string;
+}) {
+  return (
+    <>
+      <nav className="anchor-chips site-container" aria-label={jumpLabel}>
+        {units.map((unit) => (
+          <a key={unit.slug} href={`#${unit.slug}`} style={{ '--accent': unit.color } as CSSProperties}>
+            {unit.name}
+          </a>
+        ))}
+      </nav>
+      <section className="site-section tight-top">
+        <div className="site-container committee-detail-list">
+          {units.map((unit, index) => {
+            const count = activities.filter((activity) => activity.committee === unit.slug).length;
+            return (
+              <article className="committee-detail" id={unit.slug} key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                <div className="committee-logo-panel">
+                  <img src={unit.logo} alt={unit.name} />
+                </div>
+                <div>
+                  <span className="eyebrow">{unit.name}</span>
+                  <h2>{text(unit.fullName, locale)}</h2>
+                  <p>{text(unit.description, locale)}</p>
+                  <div className="program-grid">
+                    {unit.programs.map((program) => (
+                      <span key={text(program, locale)}>
+                        <CheckCircle2 size={16} />
+                        {text(program, locale)}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="committee-actions">
+                    <Link className="button secondary" href={`${href(locale, '/join')}?committee=${unit.slug}#apply`}>
+                      {locale === 'ar' ? `انضم إلى ${unit.name}` : `Join ${unit.name}`}
+                      <DirectionIcon locale={locale} />
+                    </Link>
+                    {count ? (
+                      <Link className="text-link" href={`${href(locale, '/activities')}?committee=${unit.slug}`}>
+                        {locale === 'ar' ? `أنشطة ${unit.name} (${count})` : `${unit.name} activities (${count})`}
+                      </Link>
+                    ) : null}
+                    {unit.slug === 'scope' || unit.slug === 'score' ? (
+                      <Link className="text-link" href={href(locale, '/exchange')}>
+                        {locale === 'ar' ? 'برنامج التبادل والوجهات' : 'Exchange program & destinations'}
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+                <strong className="section-index">{String(index + 1).padStart(2, '0')}</strong>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    </>
+  );
+}
+
+/** Small band that points visitors from committees to divisions and vice versa. */
+function CrossLinkBand({
+  locale,
+  units,
+  title,
+  body,
+  linkLabel,
+  path,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  title: string;
+  body: string;
+  linkLabel: string;
+  path: string;
+}) {
+  return (
+    <section className="site-section alt">
+      <div className="site-container cross-link">
+        <div>
+          <h2>{title}</h2>
+          <p>{body}</p>
+          <Link className="button secondary" href={href(locale, path)}>
+            {linkLabel}
+            <DirectionIcon locale={locale} />
+          </Link>
+        </div>
+        <ul className="logo-cloud">
+          {units.map((unit) => (
+            <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+              <Link href={`${href(locale, path)}#${unit.slug}`} aria-label={unit.name}>
+                <img src={unit.logo} alt="" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -359,44 +627,28 @@ export function CommitteesPage({ locale, content }: { locale: Locale; content: B
         title={locale === 'ar' ? 'اللجان الدائمة' : 'Standing Committees'}
         lead={
           locale === 'ar'
-            ? 'كل لجنة لها لون وشخصية ومجال تأثير واضح داخل تجربة الطالب الطبية.'
-            : 'Each committee has its own color, character, and contribution to the medical student experience.'
+            ? 'ست لجان دائمة، لكل منها مجال تأثير واضح وبرامج يمكنك المشاركة فيها من أول سنة.'
+            : 'Six standing committees, each with a clear focus and programs you can take part in from your first year.'
         }
       />
-      <section className="site-section">
-        <div className="site-container committee-detail-list">
-          {content.committees.map((committee, index) => (
-            <article
-              className="committee-detail"
-              id={committee.slug}
-              key={committee.slug}
-              style={{ '--accent': committee.color } as CSSProperties}
-            >
-              <div className="committee-logo-panel">
-                <img src={committee.logo} alt={committee.name} />
-              </div>
-              <div>
-                <span className="eyebrow">{committee.name}</span>
-                <h2>{text(committee.fullName, locale)}</h2>
-                <p>{text(committee.description, locale)}</p>
-                <div className="program-grid">
-                  {committee.programs.map((program) => (
-                    <span key={text(program, locale)}>
-                      <CheckCircle2 size={16} />
-                      {text(program, locale)}
-                    </span>
-                  ))}
-                </div>
-                <Link className="button secondary" href={`${href(locale, '/join')}?committee=${committee.slug}`}>
-                  {locale === 'ar' ? `انضم إلى ${committee.name}` : `Join ${committee.name}`}
-                  <DirectionIcon locale={locale} />
-                </Link>
-              </div>
-              <strong className="section-index">{String(index + 1).padStart(2, '0')}</strong>
-            </article>
-          ))}
-        </div>
-      </section>
+      <UnitDetailList
+        locale={locale}
+        units={content.committees}
+        activities={content.activities}
+        jumpLabel={locale === 'ar' ? 'انتقل إلى لجنة' : 'Jump to a committee'}
+      />
+      <CrossLinkBand
+        locale={locale}
+        units={content.divisions}
+        path="/divisions"
+        title={locale === 'ar' ? 'وراء كل لجنة، أقسام دعم' : 'Behind every committee: the support divisions'}
+        body={
+          locale === 'ar'
+            ? 'التدريب، تصميم المشاريع، الإعلام، التمويل، والبحث العلمي. أقسام تخدم كل اللجان، وتقدر تنضم لها كمان.'
+            : 'Training, project design, media, fundraising, and research. These divisions serve every committee, and you can join them too.'
+        }
+        linkLabel={locale === 'ar' ? 'اكتشف أقسام الدعم' : 'Explore support divisions'}
+      />
     </main>
   );
 }
@@ -410,23 +662,29 @@ export function DivisionsPage({ locale, content }: { locale: Locale; content: Bm
         title={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}
         lead={
           locale === 'ar'
-            ? 'الأقسام التي تجعل العمل الطلابي أكثر تنظيماً واستدامة.'
-            : 'The operational backbone that keeps student work organized and sustainable.'
+            ? 'خمسة أقسام تدعم كل اللجان: تدريب، مشاريع، إعلام، تمويل، وبحث علمي. ولكل قسم فريق تقدر تنضم له.'
+            : 'Five divisions that power every committee: training, projects, media, fundraising, and research. Each one has a team you can join.'
         }
       />
-      <section className="site-section">
-        <div className="site-container division-grid">
-          {content.divisions.map((division, i) => (
-            <article className="division-card" key={division.slug} style={{ '--accent': division.color, animationDelay: `${i * 80}ms` } as CSSProperties}>
-              <span className="division-bar" />
-              <img src={division.logo} alt={division.name} />
-              <h2>{division.name}</h2>
-              <h3>{text(division.fullName, locale)}</h3>
-              <p>{text(division.description, locale)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <UnitDetailList
+        locale={locale}
+        units={content.divisions}
+        activities={content.activities}
+        jumpLabel={locale === 'ar' ? 'انتقل إلى قسم' : 'Jump to a division'}
+      />
+      <CrossLinkBand
+        locale={locale}
+        units={content.committees}
+        path="/committees"
+        title={locale === 'ar' ? 'الأقسام تخدم اللجان الست' : 'Divisions serve all six committees'}
+        body={
+          locale === 'ar'
+            ? 'كل مشروع في SCOME أو SCOPH أو أي لجنة تانية بيعتمد على تدريب وتصميم وتمويل وتغطية من أقسام الدعم.'
+            : 'Every SCOME, SCOPH, or other committee project relies on training, design, funding, and coverage from the support divisions.'
+        }
+        linkLabel={locale === 'ar' ? 'استكشف اللجان' : 'Explore committees'}
+      />
+      <CtaBand locale={locale} />
     </main>
   );
 }
@@ -440,15 +698,100 @@ export function ActivitiesPage({ locale, content }: { locale: Locale; content: B
         title={locale === 'ar' ? 'أنشطة ومشاريع بمسا' : 'BMSA activities and projects'}
         lead={
           locale === 'ar'
-            ? 'يمكن تحديث هذه البطاقات من لوحة الإدارة وربطها بكل لجنة.'
-            : 'These cards are CMS-ready and can be updated from the admin dashboard.'
+            ? 'حملات توعية، ورش مهارات، وبرامج تبادل تنفذها لجاننا داخل الكلية وفي مجتمع بني سويف.'
+            : 'Awareness campaigns, skills workshops, and exchange programs run by our committees across the faculty and the Beni Suef community.'
         }
       />
       <section className="site-section">
         <div className="site-container">
-          <ActivityGrid locale={locale} activities={content.activities} />
+          <ActivityBrowser locale={locale} activities={content.activities} units={[...content.committees, ...content.divisions]} />
         </div>
       </section>
+    </main>
+  );
+}
+
+export function ActivityDetailPage({
+  locale,
+  content,
+  activity,
+}: {
+  locale: Locale;
+  content: BmsaContent;
+  activity: Activity;
+}) {
+  const isDivision = content.divisions.some((item) => item.slug === activity.committee);
+  const committee: OrgUnit | undefined = [...content.committees, ...content.divisions].find((item) => item.slug === activity.committee);
+  const related = content.activities
+    .filter((item) => item.slug !== activity.slug)
+    .sort((a, b) => Number(b.committee === activity.committee) - Number(a.committee === activity.committee))
+    .slice(0, 3);
+  const Back = locale === 'ar' ? ArrowRight : ArrowLeft;
+
+  return (
+    <main style={{ '--accent': committee?.color } as CSSProperties}>
+      <section className="page-hero activity-hero">
+        <div className="site-container">
+          <Link className="back-link" href={href(locale, '/activities')}>
+            <Back size={16} />
+            {locale === 'ar' ? 'كل الأنشطة' : 'All activities'}
+          </Link>
+          <span className="eyebrow">{text(activity.tag, locale)}</span>
+          <h1>{text(activity.title, locale)}</h1>
+          <p>{text(activity.excerpt, locale)}</p>
+        </div>
+      </section>
+
+      <section className="site-section">
+        <div className="site-container activity-detail">
+          <article>
+            <div className="activity-detail-media">
+              {activity.imageUrl ? (
+                <img src={activity.imageUrl} alt={text(activity.title, locale)} />
+              ) : (
+                <IconFor name={activity.icon} size={64} />
+              )}
+            </div>
+            <div className="activity-detail-body">
+              {text(activity.description, locale)
+                .split(/\n{2,}/)
+                .map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+            </div>
+          </article>
+
+          {committee ? (
+            <aside className="form-card activity-committee">
+              <span className="eyebrow">
+                {locale === 'ar' ? (isDivision ? 'القسم المنظم' : 'اللجنة المنظمة') : 'Organized by'}
+              </span>
+              <img src={committee.logo} alt={committee.name} />
+              <h2>{text(committee.fullName, locale)}</h2>
+              <p>{text(committee.description, locale)}</p>
+              <Link className="button primary full" href={`${href(locale, '/join')}?committee=${committee.slug}#apply`}>
+                {locale === 'ar' ? `انضم إلى ${committee.name}` : `Join ${committee.name}`}
+                <DirectionIcon locale={locale} />
+              </Link>
+              <Link className="text-link" href={`${href(locale, isDivision ? '/divisions' : '/committees')}#${committee.slug}`}>
+                {locale === 'ar' ? (isDivision ? 'عن القسم' : 'عن اللجنة') : isDivision ? 'About this division' : 'About this committee'}
+              </Link>
+            </aside>
+          ) : null}
+        </div>
+      </section>
+
+      {related.length ? (
+        <section className="site-section alt">
+          <div className="site-container">
+            <SectionHeader
+              eyebrow={locale === 'ar' ? 'المزيد' : 'More'}
+              title={locale === 'ar' ? 'أنشطة أخرى' : 'Other activities'}
+            />
+            <ActivityGrid locale={locale} activities={related} units={[...content.committees, ...content.divisions]} />
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
@@ -466,28 +809,30 @@ export function MerchPage({
     en: {
       badge: 'Merch',
       title: 'BMSA merch store',
-      lead: 'Browse available items and send an order request. The team confirms availability and price.',
+      lead: 'Browse the collection and send an order request. The team will contact you to confirm availability, price, and pickup.',
       order: 'Order request',
+      orderItem: 'Order this',
       product: 'Product',
       size: 'Size',
       qty: 'Quantity',
       name: 'Full name',
       email: 'Email',
-      phone: 'Phone',
+      phone: 'Phone (WhatsApp)',
       notes: 'Notes',
-      submit: 'Send order',
+      submit: 'Send order request',
     },
     ar: {
       badge: 'المتجر',
       title: 'متجر بمسا',
-      lead: 'استعرض المنتجات المتاحة وأرسل طلبك، وسيؤكد الفريق التوفر والسعر.',
+      lead: 'استعرض المنتجات وأرسل طلبك، وسيتواصل معك الفريق لتأكيد التوفر والسعر وموعد الاستلام.',
       order: 'طلب منتج',
+      orderItem: 'اطلب الآن',
       product: 'المنتج',
       size: 'المقاس',
       qty: 'الكمية',
       name: 'الاسم بالكامل',
       email: 'البريد الإلكتروني',
-      phone: 'رقم الهاتف',
+      phone: 'رقم الهاتف (واتساب)',
       notes: 'ملاحظات',
       submit: 'إرسال الطلب',
     },
@@ -500,30 +845,47 @@ export function MerchPage({
         <div className="site-container merch-layout">
           <div className="merch-grid">
             {content.merchItems.map((item) => (
-              <article className="merch-card" key={item.slug}>
+              <article className={item.inStock ? 'merch-card' : 'merch-card sold-out'} key={item.slug}>
                 <div className="merch-art" style={{ background: safeGradient(item.gradient) }}>
-                  {item.imageUrl ? <img src={item.imageUrl} alt={text(item.name, locale)} /> : <IconFor name={item.icon} size={48} />}
+                  {item.imageUrl ? <img src={item.imageUrl} alt={text(item.name, locale)} loading="lazy" /> : <IconFor name={item.icon} size={48} />}
                 </div>
                 <div>
                   <h2>{text(item.name, locale)}</h2>
                   <p>{text(item.description, locale)}</p>
                   <strong>{text(item.price, locale)}</strong>
-                  {!item.inStock ? <span className="stock-pill">{locale === 'ar' ? 'غير متاح' : 'Out of stock'}</span> : null}
+                  {item.inStock ? (
+                    <Link className="text-link" href={`?item=${item.slug}#order`}>
+                      {labels.orderItem}
+                    </Link>
+                  ) : (
+                    <span className="stock-pill">{locale === 'ar' ? 'غير متاح' : 'Out of stock'}</span>
+                  )}
                 </div>
               </article>
             ))}
           </div>
 
-          <aside className="form-card">
+          <aside className="form-card" id="order">
             <h2>{labels.order}</h2>
             <Notice locale={locale} params={params} successKey="ordered" />
-            <MerchOrderForm locale={locale} items={content.merchItems} labels={labels} />
+            <MerchOrderForm
+              key={firstParam(params?.item) || 'none'}
+              locale={locale}
+              items={content.merchItems}
+              labels={labels}
+              initialSlug={firstParam(params?.item)}
+            />
           </aside>
         </div>
       </section>
     </main>
   );
 }
+
+const academicYears = {
+  en: ['1st year', '2nd year', '3rd year', '4th year', '5th year', '6th year', 'Intern'],
+  ar: ['الفرقة الأولى', 'الفرقة الثانية', 'الفرقة الثالثة', 'الفرقة الرابعة', 'الفرقة الخامسة', 'الفرقة السادسة', 'امتياز'],
+};
 
 export function JoinPage({
   locale,
@@ -538,28 +900,57 @@ export function JoinPage({
     en: {
       badge: 'Join',
       title: 'Become a BMSA member',
-      lead: 'Tell us where you want to contribute. Your application lands in the admin dashboard.',
+      formTitle: 'Membership application',
+      lead: 'Tell us where you want to contribute. Our team reviews every application and will contact you about next steps.',
       name: 'Full name',
       email: 'Email',
-      phone: 'Phone',
+      phone: 'Phone (WhatsApp)',
       year: 'Academic year',
-      committee: 'Committee preference',
+      chooseYear: 'Choose your year',
+      committee: 'Committee or division',
+      chooseCommittee: 'Choose a committee or division',
       motivation: 'Why do you want to join?',
+      motivationHint: 'A few sentences about your interests and what you hope to do.',
       submit: 'Submit application',
     },
     ar: {
       badge: 'انضم',
       title: 'انضم إلى بمسا',
-      lead: 'اخبرنا أين تريد أن تساهم. سيصل طلبك مباشرة إلى لوحة الإدارة.',
+      formTitle: 'طلب العضوية',
+      lead: 'اخبرنا أين تريد أن تساهم. يراجع فريقنا كل طلب وسيتواصل معك بخصوص الخطوات التالية.',
       name: 'الاسم بالكامل',
       email: 'البريد الإلكتروني',
-      phone: 'رقم الهاتف',
+      phone: 'رقم الهاتف (واتساب)',
       year: 'الفرقة الدراسية',
-      committee: 'اللجنة المفضلة',
+      chooseYear: 'اختر الفرقة',
+      committee: 'اللجنة أو القسم',
+      chooseCommittee: 'اختر لجنة أو قسماً',
       motivation: 'لماذا تريد الانضمام؟',
+      motivationHint: 'بضع جمل عن اهتماماتك وما تتمنى أن تقدمه.',
       submit: 'إرسال الطلب',
     },
   }[locale];
+
+  const requested = firstParam(params?.committee);
+  const preselected = [...content.committees, ...content.divisions].some((unit) => unit.slug === requested) ? requested : '';
+
+  const steps: { icon: LucideIcon; title: string; body: string }[] = [
+    {
+      icon: ClipboardList,
+      title: locale === 'ar' ? 'قدّم الطلب' : 'Apply',
+      body: locale === 'ar' ? 'املأ النموذج واختر اللجنة أو القسم الأقرب لاهتمامك.' : 'Fill in the form and pick the committee or division closest to your interests.',
+    },
+    {
+      icon: MessageCircle,
+      title: locale === 'ar' ? 'نتواصل معك' : 'We get in touch',
+      body: locale === 'ar' ? 'يراجع الفريق طلبك ويتواصل معك عبر الهاتف أو البريد.' : 'The team reviews your application and contacts you by phone or email.',
+    },
+    {
+      icon: UsersRound,
+      title: locale === 'ar' ? 'ابدأ المشاركة' : 'Get involved',
+      body: locale === 'ar' ? 'احضر التعريف بالأعضاء الجدد وشارك في أول نشاط.' : 'Attend the new-member orientation and join your first activity.',
+    },
+  ];
 
   return (
     <main>
@@ -590,61 +981,104 @@ export function JoinPage({
                     ? 'فرص قيادة وتبادل دولي ضمن شبكة IFMSA.'
                     : 'Leadership roles and international exchange through the IFMSA network.',
                 },
-              ] as { icon: typeof GraduationCap; title: string; body: string }[]).map(({ icon: Icon, title, body }) => (
+              ] as { icon: LucideIcon; title: string; body: string }[]).map(({ icon: Icon, title, body }) => (
                 <div className="join-value-card" key={title}>
                   <Icon size={20} />
-                  <h4>{title}</h4>
+                  <h3>{title}</h3>
                   <p>{body}</p>
                 </div>
               ))}
             </div>
+
+            <SectionHeader
+              eyebrow={locale === 'ar' ? 'كيف تنضم' : 'How it works'}
+              title={locale === 'ar' ? 'ثلاث خطوات بسيطة' : 'Three simple steps'}
+            />
+            <ol className="steps-list">
+              {steps.map(({ icon: Icon, title, body }, i) => (
+                <li key={title}>
+                  <span className="step-num">{i + 1}</span>
+                  <div>
+                    <h3>
+                      <Icon size={18} />
+                      {title}
+                    </h3>
+                    <p>{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
             <SectionHeader
               eyebrow={locale === 'ar' ? 'اختيار المسار' : 'Choose your path'}
-              title={locale === 'ar' ? 'ابحث عن اللجنة الأقرب لك' : 'Find the committee that fits you'}
+              title={locale === 'ar' ? 'ابحث عن المكان الأقرب لك' : 'Find the team that fits you'}
               lead={
                 locale === 'ar'
-                  ? 'راجع اللجان والأقسام قبل إرسال الطلب، واختر المساحة التي تناسب اهتمامك.'
-                  : 'Review committees and divisions before applying, then choose the space that matches your interest.'
+                  ? 'تقدر تنضم لإحدى اللجان الست، أو لأحد أقسام الدعم لو بتحب التدريب أو الإعلام أو التمويل أو البحث.'
+                  : 'Join one of the six committees, or a support division if you are into training, media, fundraising, or research.'
               }
             />
-            <CommitteeGrid locale={locale} content={content} compact />
+            <h3 className="grid-label">{locale === 'ar' ? 'اللجان الدائمة' : 'Standing Committees'}</h3>
+            <UnitGrid locale={locale} units={content.committees} basePath="/committees" compact />
+            <h3 className="grid-label">{locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}</h3>
+            <UnitGrid locale={locale} units={content.divisions} basePath="/divisions" compact />
           </div>
 
-          <aside className="form-card">
-            <h2>{labels.title}</h2>
+          <aside className="form-card" id="apply">
+            <h2>{labels.formTitle}</h2>
             <Notice locale={locale} params={params} successKey="submitted" />
             <form action={submitMembershipApplication}>
               <input type="hidden" name="locale" value={locale} />
               <label>
                 {labels.name}
-                <input name="name" required />
+                <input name="name" autoComplete="name" required />
               </label>
               <label>
                 {labels.email}
-                <input name="email" type="email" required />
+                <input name="email" type="email" autoComplete="email" dir="ltr" required />
               </label>
               <label>
                 {labels.phone}
-                <input name="phone" required />
+                <input name="phone" type="tel" inputMode="tel" autoComplete="tel" dir="ltr" required />
               </label>
               <label>
                 {labels.year}
-                <input name="faculty_year" required />
-              </label>
-              <label>
-                {labels.committee}
-                <select name="committee_preference" required>
-                  <option value="">{labels.committee}</option>
-                  {content.committees.map((committee) => (
-                    <option key={committee.slug} value={committee.slug}>
-                      {committee.name}
+                <select name="faculty_year" required defaultValue="">
+                  <option value="" disabled>
+                    {labels.chooseYear}
+                  </option>
+                  {academicYears[locale].map((year) => (
+                    <option key={year} value={year}>
+                      {year}
                     </option>
                   ))}
                 </select>
               </label>
               <label>
+                {labels.committee}
+                <select name="committee_preference" required defaultValue={preselected}>
+                  <option value="" disabled>
+                    {labels.chooseCommittee}
+                  </option>
+                  <optgroup label={locale === 'ar' ? 'اللجان الدائمة' : 'Standing Committees'}>
+                    {content.committees.map((committee) => (
+                      <option key={committee.slug} value={committee.slug}>
+                        {committee.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}>
+                    {content.divisions.map((division) => (
+                      <option key={division.slug} value={division.slug}>
+                        {division.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+              </label>
+              <label>
                 {labels.motivation}
-                <textarea name="motivation" rows={5} required />
+                <textarea name="motivation" rows={5} required placeholder={labels.motivationHint} />
               </label>
               <button className="button primary full" type="submit">
                 {labels.submit}
@@ -657,20 +1091,29 @@ export function JoinPage({
   );
 }
 
-function CommitteeGrid({ locale, content, compact = false }: { locale: Locale; content: BmsaContent; compact?: boolean }) {
+function UnitGrid({
+  locale,
+  units,
+  basePath,
+  compact = false,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  basePath: '/committees' | '/divisions';
+  compact?: boolean;
+}) {
   return (
-    <div className={compact ? 'committee-grid compact' : 'committee-grid'}>
-      {content.committees.map((committee, i) => (
+    <div className={['committee-grid', compact ? 'compact' : '', basePath === '/divisions' ? 'divisions' : ''].filter(Boolean).join(' ')}>
+      {units.map((unit, i) => (
         <article
           className="committee-card"
-          key={committee.slug}
-          style={{ '--accent': committee.color, animationDelay: `${i * 80}ms` } as CSSProperties}
+          key={unit.slug}
+          style={{ '--accent': unit.color, animationDelay: `${i * 80}ms` } as CSSProperties}
         >
-          <span className="committee-abbr">{committee.name}</span>
-          <img src={committee.logo} alt={committee.name} />
-          <h3>{text(committee.fullName, locale)}</h3>
-          <p>{text(committee.description, locale)}</p>
-          <Link href={`${href(locale, '/committees')}#${committee.slug}`}>
+          <img src={unit.logo} alt={unit.name} />
+          <h3>{text(unit.fullName, locale)}</h3>
+          <p>{text(unit.description, locale)}</p>
+          <Link href={`${href(locale, basePath)}#${unit.slug}`} aria-label={`${locale === 'ar' ? 'استكشف' : 'Explore'} ${unit.name}`}>
             {locale === 'ar' ? 'استكشف' : 'Explore'}
             <DirectionIcon locale={locale} />
           </Link>
@@ -680,28 +1123,7 @@ function CommitteeGrid({ locale, content, compact = false }: { locale: Locale; c
   );
 }
 
-function ActivityGrid({ locale, activities }: { locale: Locale; activities: BmsaContent['activities'] }) {
-  return (
-    <div className="activity-grid">
-      {activities.map((activity, i) => (
-        <article className="activity-card" key={activity.slug} style={{ animationDelay: `${i * 90}ms` } as CSSProperties}>
-          <div className="activity-thumb">
-            {activity.imageUrl ? <img src={activity.imageUrl} alt={text(activity.title, locale)} /> : <IconFor name={activity.icon} size={42} />}
-          </div>
-          <div className="activity-body">
-            <span className="activity-tag">{text(activity.tag, locale)}</span>
-            <h3>{text(activity.title, locale)}</h3>
-            <p>{text(activity.excerpt, locale)}</p>
-            <Link className="card-cta" href={href(locale, '/activities')}>
-              {locale === 'ar' ? 'استعرض' : 'View Details'}
-              <DirectionIcon locale={locale} />
-            </Link>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
+const TBD_NAMES = new Set(['tbd', 'يُعلن لاحقاً', 'يعلن لاحقا', '']);
 
 function BoardSection({ locale, content }: { locale: Locale; content: BmsaContent }) {
   const eb = content.boardMembers.filter((member) => member.tier === 'eb');
@@ -716,8 +1138,8 @@ function BoardSection({ locale, content }: { locale: Locale; content: BmsaConten
           title={locale === 'ar' ? 'المجلس التنفيذي وفريق المسؤولين (TO)' : 'Executive Board and Team of Officials (TO)'}
           lead={
             locale === 'ar'
-              ? 'الأسماء والصور قابلة للتحديث من لوحة الإدارة كل عام.'
-              : 'Names and photos can be updated from the admin dashboard each year.'
+              ? 'الفريق الذي يقود بمسا بني سويف هذا العام.'
+              : 'The team leading BMSA Benisuef this term.'
           }
         />
         <div className="board-stack">
@@ -765,17 +1187,25 @@ function BoardTier({
         {title}
       </h3>
       <div className="board-grid">
-        {members.map((member) => (
-          <article className="board-card" key={`${member.tier}-${member.sortOrder}`}>
-            <div className="avatar" style={{ background: safeGradient(member.gradient) }}>
-              {member.imageUrl ? <img src={member.imageUrl} alt={text(member.memberName, locale)} /> : <IconFor name={member.icon} size={30} />}
-            </div>
-            <h4>{text(member.positionTitle, locale)}</h4>
-            <span>{text(member.role, locale)}</span>
-            <strong>{text(member.memberName, locale)}</strong>
-          </article>
-        ))}
+        {members.map((member) => {
+          const name = text(member.memberName, locale);
+          const pending = TBD_NAMES.has(name.trim().toLowerCase());
+          return (
+            <article className="board-card" key={`${member.tier}-${member.sortOrder}`}>
+              <div className="avatar" style={{ background: safeGradient(member.gradient) }}>
+                {member.imageUrl ? <img src={member.imageUrl} alt={name} loading="lazy" /> : <IconFor name={member.icon} size={30} />}
+              </div>
+              <h4>{text(member.positionTitle, locale)}</h4>
+              <span>{text(member.role, locale)}</span>
+              <strong className={pending ? 'pending' : undefined}>
+                {pending ? (locale === 'ar' ? 'يُعلن قريباً' : 'To be announced') : name}
+              </strong>
+            </article>
+          );
+        })}
       </div>
     </div>
   );
 }
+
+export { activityHref };

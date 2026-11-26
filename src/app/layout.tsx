@@ -17,7 +17,10 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://bmsa-benisuef.org'),
-  title: 'BMSA Benisuef | Medical Students Association',
+  title: {
+    default: 'BMSA Benisuef | Medical Students Association',
+    template: '%s | BMSA Benisuef',
+  },
   description:
     'BMSA Benisuef is the IFMSA-Egypt local committee at Beni Suef University Faculty of Medicine.',
   keywords: ['BMSA', 'Beni Suef', 'IFMSA Egypt', 'medical students', 'SCOME', 'SCOPE', 'SCOPH'],
@@ -28,15 +31,16 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'BMSA Benisuef',
     description:
-      'A CMS-powered bilingual website for BMSA Benisuef and its committees, activities, merch, and membership flow.',
+      'BMSA Benisuef — the IFMSA-Egypt local committee at Beni Suef University Faculty of Medicine: committees, activities, exchanges, and membership.',
     images: ['/images/logos/bmsa-logo-h.png'],
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${cairo.variable}`}>{children}</body>
+    // Font variables must live on <html> so the :root tokens in globals.css can resolve them.
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${cairo.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

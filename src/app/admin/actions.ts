@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { getAdminResource } from '@/lib/admin-resources';
+import { cairoLocalToIso } from '@/lib/cairo-time';
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -46,6 +47,9 @@ export async function saveResource(resourceKey: string, formData: FormData) {
   for (const field of resource.fields) {
     if (field.type === 'checkbox') {
       payload[field.name] = formData.get(field.name) === 'true';
+    } else if (field.type === 'datetime') {
+      const local = String(formData.get(field.name) || '');
+      payload[field.name] = local ? cairoLocalToIso(local) : null;
     } else if (field.type === 'number') {
       payload[field.name] = Number(formData.get(field.name) || 0);
     } else if (field.parseAs === 'array') {
@@ -53,6 +57,10 @@ export async function saveResource(resourceKey: string, formData: FormData) {
     } else {
       payload[field.name] = cleanString(formData.get(field.name));
     }
+  }
+
+  if (typeof payload.opens_at === 'string' && typeof payload.closes_at === 'string' && payload.closes_at <= payload.opens_at) {
+    throw new Error('The closing time must be after the opening time.');
   }
 
   const { error } = id

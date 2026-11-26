@@ -22,7 +22,11 @@ export type Division = {
   description: LocalizedText;
   color: string;
   logo: string;
+  programs: LocalizedText[];
 };
+
+/** A standing committee or a support division — both can own activities and receive applications. */
+export type OrgUnit = Committee | Division;
 
 export type Activity = {
   id?: string;
@@ -64,12 +68,62 @@ export type BoardMember = {
   sortOrder: number;
 };
 
+export type ExchangeProgram = 'scope' | 'score';
+
+export type ExchangeRegion = 'europe' | 'americas' | 'asia' | 'africa' | 'middle-east' | 'oceania';
+
+export type ExchangeDestination = {
+  id?: string;
+  slug: string;
+  country: LocalizedText;
+  /** Emoji flag, e.g. 🇩🇪 */
+  flag: string;
+  region: ExchangeRegion;
+  /** Which programs this destination is offered in. */
+  programs: ExchangeProgram[];
+  cities: LocalizedText;
+  fields: LocalizedText;
+  language: LocalizedText;
+  notes: LocalizedText;
+  sortOrder: number;
+};
+
+export type ExchangeStory = {
+  id?: string;
+  slug: string;
+  studentName: LocalizedText;
+  academicYear: LocalizedText;
+  program: ExchangeProgram;
+  country: LocalizedText;
+  flag: string;
+  host: LocalizedText;
+  period: LocalizedText;
+  quote: LocalizedText;
+  story: LocalizedText;
+  imageUrl?: string | null;
+  sortOrder: number;
+};
+
+export type ExchangeCall = {
+  id?: string;
+  title: LocalizedText;
+  /** Which program the call is for. */
+  program: ExchangeProgram | 'both';
+  /** ISO timestamps (UTC). */
+  opensAt: string;
+  closesAt: string;
+  details: LocalizedText;
+};
+
 export type BmsaContent = {
   committees: Committee[];
   divisions: Division[];
   activities: Activity[];
   merchItems: MerchItem[];
   boardMembers: BoardMember[];
+  exchangeDestinations: ExchangeDestination[];
+  exchangeStories: ExchangeStory[];
+  exchangeCalls: ExchangeCall[];
   images: Record<string, string>;
 };
 

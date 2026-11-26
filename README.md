@@ -24,9 +24,10 @@ Official bilingual **Arabic/English** website and content management system for 
 - About — mission/vision/values, journey timeline, Executive Board and Team of Officials (TO)
 - Committees — SCOME, SCOPE, SCOPH, SCORA, SCORE, SCORP with programs
 - Divisions — CBSD, PSD, PNSD, FSD, RSD support divisions
-- Activities — CMS-managed activity cards per committee
-- Merch — product listing with dynamic size selection, order form
-- Join — membership application form
+- Activities — CMS-managed activity cards per committee, filterable by committee (`?committee=`), each with its own detail page (`/activities/[slug]`)
+- Exchange — countdown to the next application call, pre-application form, SCOPE/SCORE programs, how it works, destinations explorer (filter by program and region), student stories, incoming exchange, FAQ
+- Merch — product listing with dynamic size selection, order form (`?item=` preselects a product)
+- Join — membership application form (`?committee=` preselects a committee)
 
 **Admin panel** (`/admin`, login required)
 - Dashboard with live counters and latest applications/orders
@@ -66,7 +67,9 @@ npm install
 
 The script creates all tables, functions, RLS policies, indexes, triggers, a storage bucket, and inserts seed demo data. It is fully idempotent — safe to run multiple times.
 
-> **Existing databases:** to apply the current org structure (Executive Board + Team of Officials split into Standing Committee Officers and Support Division Directors) without re-seeding demo rows, run `supabase/migrations/20261009_org_structure.sql` instead.
+> **Existing databases:** also run `supabase/migrations/20261127_division_activities.sql` (activities owned by divisions) `supabase/migrations/20261127_exchange.sql` (Exchange page tables), and `supabase/migrations/20261128_exchange_applications.sql` (exchange countdown + pre-applications), in that order.
+>
+> **Org structure:** to apply the current org structure (Executive Board + Team of Officials split into Standing Committee Officers and Support Division Directors) without re-seeding demo rows, run `supabase/migrations/20261009_org_structure.sql` instead.
 
 **What gets created:**
 
@@ -161,7 +164,7 @@ src/
 │   ├── about/                # EN about
 │   ├── committees/           # EN committees
 │   ├── divisions/            # EN divisions
-│   ├── activities/           # EN activities
+│   ├── activities/           # EN activities (+ [slug]/ detail pages)
 │   ├── merch/                # EN merch shop
 │   ├── join/                 # EN join form
 │   ├── login/                # Admin login
@@ -180,6 +183,9 @@ src/
 │   ├── site/
 │   │   ├── SiteShell.tsx     # Header, footer, navigation (sets lang/dir)
 │   │   ├── Pages.tsx         # All public page components
+│   │   ├── ActivityGrid.tsx  # Activity cards (coloured by committee)
+│   │   ├── ActivityBrowser.tsx # Client-side committee filter for activities
+│   │   ├── HtmlLang.tsx      # Keeps <html lang/dir> in sync with the page locale
 │   │   └── MerchOrderForm.tsx # Client component — dynamic size switching
 │   └── admin/
 │       ├── AdminNav.tsx      # Sidebar navigation
@@ -189,6 +195,7 @@ src/
 │   ├── types.ts              # Shared TypeScript types
 │   ├── bmsa-data.ts          # Static fallback data (committees, divisions, etc.)
 │   ├── cms.ts                # Supabase content fetcher with fallback
+│   ├── routes.ts             # Localized paths + per-page SEO metadata (EN/AR)
 │   └── admin-resources.ts    # Admin panel resource definitions
 ├── utils/supabase/
 │   ├── public.ts             # Anon client (public reads + form submissions)
@@ -213,6 +220,10 @@ supabase/
 | `/admin/activities` | Manage activity cards (create / edit / delete / publish) |
 | `/admin/merch` | Manage merch products |
 | `/admin/board` | Manage board members |
+| `/admin/exchange-destinations` | Manage destinations on the Exchange page |
+| `/admin/exchange-stories` | Manage exchange stories on the Exchange page |
+| `/admin/exchange-calls` | Application windows that drive the exchange countdown (Egypt time) |
+| `/admin/exchange-applications` | View-only exchange pre-applications |
 | `/admin/images` | Manage image URL overrides |
 | `/admin/applications` | View-only membership applications report |
 | `/admin/orders` | View-only merch orders report |
@@ -228,6 +239,10 @@ supabase/
 | `bmsa_merch_items` | Shop products | Read published rows |
 | `bmsa_board_members` | Executive Board (EB) and Team of Officials (TO) members | Read published rows |
 | `bmsa_images` | Centrally managed image URLs | Read published rows |
+| `bmsa_exchange_destinations` | Exchange page destinations | Read published rows |
+| `bmsa_exchange_stories` | Exchange page student stories | Read published rows |
+| `bmsa_exchange_calls` | Exchange application windows (countdown) | Read published rows |
+| `bmsa_exchange_applications` | Exchange pre-applications | Insert only |
 | `bmsa_membership_applications` | Join form submissions | Insert only |
 | `bmsa_merch_orders` | Order form submissions | Insert only |
 

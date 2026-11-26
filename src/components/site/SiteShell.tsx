@@ -1,25 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import { Facebook, Globe2, Instagram, Linkedin, Mail, MapPin, Menu, Stethoscope } from 'lucide-react';
+import HtmlLang from '@/components/site/HtmlLang';
 import { siteCopy } from '@/lib/bmsa-data';
+import { pageHref, pagePaths, type PageKey } from '@/lib/routes';
 import type { Locale } from '@/lib/types';
 
-type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'merch' | 'join';
-
-const paths: Record<PageKey, string> = {
-  home: '/',
-  about: '/about',
-  committees: '/committees',
-  divisions: '/divisions',
-  activities: '/activities',
-  merch: '/merch',
-  join: '/join',
-};
-
-function localizedPath(locale: Locale, key: PageKey) {
-  const path = paths[key];
-  return locale === 'ar' ? `/ar${path === '/' ? '' : path}` : path;
-}
+const navKeys = Object.keys(pagePaths) as PageKey[];
 
 export default function SiteShell({
   locale,
@@ -32,23 +19,41 @@ export default function SiteShell({
 }) {
   const copy = siteCopy[locale];
   const otherLocale: Locale = locale === 'ar' ? 'en' : 'ar';
-  const alternatePath = localizedPath(otherLocale, current);
+  const alternatePath = pageHref(otherLocale, current);
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+
+  const socials = [
+    { href: copy.facebook, label: 'Facebook', Icon: Facebook },
+    { href: copy.instagram, label: 'Instagram', Icon: Instagram },
+    { href: copy.linkedin, label: 'LinkedIn', Icon: Linkedin },
+  ].filter((social) => social.href);
 
   return (
-    <div className="site-shell" lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="site-shell" lang={locale} dir={dir}>
+      {/* Set <html lang/dir> before first paint; HtmlLang keeps it in sync on client navigation. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(locale)};document.documentElement.dir=${JSON.stringify(dir)};`,
+        }}
+      />
+      <HtmlLang locale={locale} />
+      <a className="skip-link" href="#main">
+        {locale === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content'}
+      </a>
       <header className="site-header">
         <script dangerouslySetInnerHTML={{ __html: `(function(){var h=document.querySelector('.site-header');if(!h)return;function u(){h.classList.toggle('nav-scrolled',window.scrollY>20);}window.addEventListener('scroll',u,{passive:true});u();})();` }} />
         <div className="site-container nav-bar">
-          <Link className="brand-link" href={localizedPath(locale, 'home')} aria-label={copy.brand}>
-            <img src="/images/logos/bmsa-logo-h.png" alt={copy.brand} />
+          <Link className="brand-link" href={pageHref(locale, 'home')} aria-label={copy.brand}>
+            <img src="/images/logos/bmsa-logo-h.png" alt={copy.brand} width={160} height={94} />
           </Link>
 
-          <nav className="desktop-nav" aria-label="Primary navigation">
-            {(Object.keys(paths) as PageKey[]).map((key) => (
+          <nav className="desktop-nav" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Primary navigation'}>
+            {navKeys.map((key) => (
               <Link
                 key={key}
-                href={localizedPath(locale, key)}
-                className={current === key ? 'active' : undefined}
+                href={pageHref(locale, key)}
+                className={[current === key ? 'active' : '', key === 'join' ? 'nav-cta' : ''].filter(Boolean).join(' ') || undefined}
+                aria-current={current === key ? 'page' : undefined}
               >
                 {copy.nav[key]}
               </Link>
@@ -56,54 +61,62 @@ export default function SiteShell({
           </nav>
 
           <div className="nav-actions">
-            <Link className="lang-chip" href={alternatePath}>
+            <Link
+              className="lang-chip"
+              href={alternatePath}
+              hrefLang={otherLocale}
+              aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+            >
               <Globe2 size={16} />
-              {otherLocale.toUpperCase()}
+              {otherLocale === 'ar' ? 'عربي' : 'EN'}
             </Link>
             <details className="mobile-menu">
-              <summary aria-label="Open navigation">
+              <summary aria-label={locale === 'ar' ? 'فتح القائمة' : 'Open navigation'}>
                 <Menu size={22} />
               </summary>
-              <div className="mobile-menu-panel">
-                {(Object.keys(paths) as PageKey[]).map((key) => (
-                  <Link key={key} href={localizedPath(locale, key)}>
+              <nav className="mobile-menu-panel" aria-label={locale === 'ar' ? 'القائمة' : 'Mobile navigation'}>
+                {navKeys.map((key) => (
+                  <Link
+                    key={key}
+                    href={pageHref(locale, key)}
+                    className={current === key ? 'active' : undefined}
+                    aria-current={current === key ? 'page' : undefined}
+                  >
                     {copy.nav[key]}
                   </Link>
                 ))}
-              </div>
+              </nav>
             </details>
           </div>
         </div>
       </header>
 
-      {children}
+      <div id="main">{children}</div>
 
       <footer className="site-footer">
         <div className="site-container footer-grid">
           <div>
-            <Link className="footer-logo" href={localizedPath(locale, 'home')}>
-              <img src="/images/logos/bmsa-logo-h-white.png" alt={copy.brand} />
+            <Link className="footer-logo" href={pageHref(locale, 'home')}>
+              <img src="/images/logos/bmsa-logo-h-white.png" alt={copy.brand} width={160} height={94} />
             </Link>
             <p>{copy.heroLead}</p>
-            <div className="social-row" aria-label="Social links">
-              <a href={copy.facebook} aria-label="Facebook" target="_blank" rel="noreferrer">
-                <Facebook size={18} />
-              </a>
-              <a href="#" aria-label="Instagram">
-                <Instagram size={18} />
-              </a>
-              <a href="#" aria-label="LinkedIn">
-                <Linkedin size={18} />
-              </a>
-            </div>
+            {socials.length ? (
+              <div className="social-row" aria-label={locale === 'ar' ? 'حساباتنا' : 'Social links'}>
+                {socials.map(({ href, label, Icon }) => (
+                  <a key={label} href={href} aria-label={label} target="_blank" rel="noreferrer">
+                    <Icon size={18} />
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div>
             <h3>{locale === 'ar' ? 'روابط سريعة' : 'Quick Links'}</h3>
             <ul className="footer-list">
-              {(Object.keys(paths) as PageKey[]).slice(0, 6).map((key) => (
+              {navKeys.map((key) => (
                 <li key={key}>
-                  <Link href={localizedPath(locale, key)}>{copy.nav[key]}</Link>
+                  <Link href={pageHref(locale, key)}>{copy.nav[key]}</Link>
                 </li>
               ))}
             </ul>
@@ -118,7 +131,9 @@ export default function SiteShell({
               </li>
               <li>
                 <Mail size={18} />
-                <a href={`mailto:${copy.email}`}>{copy.email}</a>
+                <a href={`mailto:${copy.email}`} dir="ltr">
+                  {copy.email}
+                </a>
               </li>
               <li>
                 <Stethoscope size={18} />
@@ -128,7 +143,10 @@ export default function SiteShell({
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© 2026 {copy.brand}. IFMSA-Egypt Local Committee.</span>
+          <span>
+            © {new Date().getFullYear()} {copy.brand}.{' '}
+            {locale === 'ar' ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
+          </span>
         </div>
       </footer>
     </div>
