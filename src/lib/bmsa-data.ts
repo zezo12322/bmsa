@@ -28,7 +28,7 @@ export const siteCopy = {
     stats: [
       ['500+', 'Active Members', 'Building tomorrow\'s physicians'],
       ['40+', 'Campaigns Launched', 'Public health & community impact'],
-      ['6', 'Standing Committees', 'Education, exchange, research & more'],
+      ['6 + 5', 'Committees & Divisions', '6 standing committees, 5 support divisions'],
       ['10+', 'Years of Impact', 'IFMSA-Egypt local committee'],
     ],
   },
@@ -58,7 +58,7 @@ export const siteCopy = {
     stats: [
       ['500+', 'عضو نشط', 'نبني أطباء الغد'],
       ['40+', 'حملة أُطلقت', 'صحة عامة وأثر مجتمعي'],
-      ['6', 'لجنة دائمة', 'تعليم، تبادل، بحث علمي والمزيد'],
+      ['6 + 5', 'لجان وأقسام', '6 لجان دائمة و5 أقسام دعم'],
       ['10+', 'عام من التأثير', 'لجنة محلية في IFMSA-Egypt'],
     ],
   },
@@ -198,6 +198,12 @@ export const divisions: Division[] = [
     },
     color: '#1e1e17',
     logo: '/images/logos/divisions/cbsd.png',
+    programs: [
+      { en: 'Soft Skills Trainings', ar: 'تدريبات المهارات الناعمة' },
+      { en: 'Training New Trainers (TNT)', ar: 'إعداد مدربين جدد (TNT)' },
+      { en: 'New Member Orientation', ar: 'تعريف الأعضاء الجدد' },
+      { en: 'Leadership Development', ar: 'تنمية المهارات القيادية' },
+    ],
   },
   {
     slug: 'psd',
@@ -209,6 +215,12 @@ export const divisions: Division[] = [
     },
     color: '#107a72',
     logo: '/images/logos/divisions/psd.png',
+    programs: [
+      { en: 'Project Design & Planning', ar: 'تصميم وتخطيط المشاريع' },
+      { en: 'Monitoring & Evaluation', ar: 'المتابعة والتقييم' },
+      { en: 'Proposal Review & Mentoring', ar: 'مراجعة المقترحات والإرشاد' },
+      { en: 'Impact Reporting', ar: 'تقارير الأثر' },
+    ],
   },
   {
     slug: 'pnsd',
@@ -220,6 +232,12 @@ export const divisions: Division[] = [
     },
     color: '#9f1547',
     logo: '/images/logos/divisions/pnsd.png',
+    programs: [
+      { en: 'Social Media & Content', ar: 'السوشيال ميديا وصناعة المحتوى' },
+      { en: 'Graphic Design & Visual Identity', ar: 'التصميم والهوية البصرية' },
+      { en: 'Photo & Video Coverage', ar: 'التصوير والتغطية بالفيديو' },
+      { en: 'Website & Digital Tools', ar: 'الموقع والأدوات الرقمية' },
+    ],
   },
   {
     slug: 'fsd',
@@ -231,6 +249,12 @@ export const divisions: Division[] = [
     },
     color: '#8b4514',
     logo: '/images/logos/divisions/fsd.png',
+    programs: [
+      { en: 'Sponsorships & Partnerships', ar: 'الرعايات والشراكات' },
+      { en: 'Fundraising Campaigns', ar: 'حملات جمع التبرعات' },
+      { en: 'BMSA Merch Store', ar: 'متجر بمسا' },
+      { en: 'Budgeting & Financial Planning', ar: 'الميزانيات والتخطيط المالي' },
+    ],
   },
   {
     slug: 'rsd',
@@ -242,6 +266,12 @@ export const divisions: Division[] = [
     },
     color: '#f7b826',
     logo: '/images/logos/divisions/rsd.png',
+    programs: [
+      { en: 'Research Mentorship', ar: 'الإرشاد البحثي' },
+      { en: 'Evidence-Based Medicine Sessions', ar: 'جلسات الطب المبني على الدليل' },
+      { en: 'Research Methodology Courses', ar: 'دورات منهجية البحث العلمي' },
+      { en: 'Open Science & Publishing', ar: 'العلم المفتوح والنشر' },
+    ],
   },
 ];
 
@@ -347,6 +377,40 @@ export const activities: Activity[] = [
     imageUrl: null,
     icon: 'scale',
     sortOrder: 6,
+  },
+  {
+    slug: 'soft-skills-training-day',
+    committee: 'cbsd',
+    title: { en: 'Soft Skills Training Day', ar: 'يوم تدريب المهارات الناعمة' },
+    excerpt: {
+      en: 'Communication, teamwork, and presentation trainings delivered by BMSA trainers.',
+      ar: 'تدريبات على التواصل والعمل الجماعي والعرض يقدمها مدربو بمسا.',
+    },
+    description: {
+      en: 'CBSD ran a full day of interactive trainings on communication, teamwork, time management, and presentation skills for new and returning members.',
+      ar: 'نظم CBSD يوماً كاملاً من التدريبات التفاعلية على التواصل والعمل الجماعي وإدارة الوقت ومهارات العرض للأعضاء الجدد والقدامى.',
+    },
+    tag: { en: 'CBSD - Capacity Building', ar: 'CBSD - بناء القدرات' },
+    imageUrl: null,
+    icon: 'presentation',
+    sortOrder: 7,
+  },
+  {
+    slug: 'content-creation-bootcamp',
+    committee: 'pnsd',
+    title: { en: 'Content Creation Bootcamp', ar: 'معسكر صناعة المحتوى' },
+    excerpt: {
+      en: 'Hands-on sessions on design, photography, and writing for health awareness content.',
+      ar: 'جلسات عملية في التصميم والتصوير والكتابة لمحتوى التوعية الصحية.',
+    },
+    description: {
+      en: 'PNSD trained members to plan, design, and publish accurate and engaging health awareness content for BMSA campaigns and social media.',
+      ar: 'درّب PNSD الأعضاء على تخطيط وتصميم ونشر محتوى توعية صحية دقيق وجذاب لحملات بمسا وحساباتها على السوشيال ميديا.',
+    },
+    tag: { en: 'PNSD - Media & Publications', ar: 'PNSD - الإعلام والمنشورات' },
+    imageUrl: null,
+    icon: 'camera',
+    sortOrder: 8,
   },
 ];
 

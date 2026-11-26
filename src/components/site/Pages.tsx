@@ -26,7 +26,7 @@ import {
 import { siteCopy } from '@/lib/bmsa-data';
 import { localizePath } from '@/lib/routes';
 import { submitMembershipApplication } from '@/app/actions';
-import type { Activity, BmsaContent, Locale } from '@/lib/types';
+import type { Activity, BmsaContent, Locale, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
 
 type NoticeParams = Record<string, string | string[] | undefined>;
@@ -184,7 +184,9 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
 
           <div className="hero-visual">
             <span className="hero-ring" aria-hidden="true" />
-            <img className="hero-logo" src="/images/logos/bmsa-logo-v.png" alt={copy.brand} />
+            <div className="hero-logo">
+              <img src="/images/logos/bmsa-logo-v.png" alt={copy.brand} />
+            </div>
             <ul className="orbit-grid" aria-label={locale === 'ar' ? 'اللجان الدائمة' : 'Standing committees'}>
               {content.committees.map((committee) => (
                 <li key={committee.slug} style={{ '--accent': committee.color } as CSSProperties}>
@@ -195,6 +197,26 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
               ))}
             </ul>
           </div>
+        </div>
+
+        <div className="site-container hero-divisions">
+          <span className="hero-divisions-label">
+            <Layers size={16} />
+            {locale === 'ar' ? 'أقسام الدعم' : 'Support divisions'}
+          </span>
+          <ul aria-label={locale === 'ar' ? 'أقسام الدعم' : 'Support divisions'}>
+            {content.divisions.map((division) => (
+              <li key={division.slug} style={{ '--accent': division.color } as CSSProperties}>
+                <Link
+                  href={`${href(locale, '/divisions')}#${division.slug}`}
+                  aria-label={`${division.name} — ${text(division.fullName, locale)}`}
+                  title={text(division.fullName, locale)}
+                >
+                  <img src={division.logo} alt="" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -221,11 +243,32 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
                 : 'Each committee leads a different part of education, exchange, public health, research, and advocacy.'
             }
           />
-          <CommitteeGrid locale={locale} content={content} />
+          <UnitGrid locale={locale} units={content.committees} basePath="/committees" />
         </div>
       </section>
 
       <section className="site-section alt">
+        <div className="site-container">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}
+            title={locale === 'ar' ? 'خمسة أقسام تقف وراء كل مشروع' : 'Five divisions behind every project'}
+            lead={
+              locale === 'ar'
+                ? 'التدريب، تصميم المشاريع، الإعلام، التمويل، والبحث العلمي — أقسام تدعم كل اللجان وتفتح لك مسارات مختلفة للمشاركة.'
+                : 'Training, project design, media, fundraising, and research — divisions that support every committee and give you more ways to get involved.'
+            }
+          />
+          <UnitGrid locale={locale} units={content.divisions} basePath="/divisions" />
+          <div className="section-action">
+            <Link className="button secondary" href={href(locale, '/divisions')}>
+              {locale === 'ar' ? 'اكتشف أقسام الدعم' : 'Explore support divisions'}
+              <DirectionIcon locale={locale} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="site-section">
         <div className="site-container split-feature">
           <div>
             <SectionHeader
@@ -266,7 +309,7 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
       </section>
 
       {featuredActivities.length ? (
-        <section className="site-section">
+        <section className="site-section alt">
           <div className="site-container">
             <SectionHeader
               eyebrow={locale === 'ar' ? 'آخر الأنشطة' : 'Recent Activities'}
@@ -277,7 +320,7 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
                   : 'A glimpse of the campaigns, workshops, and exchanges our committees run.'
               }
             />
-            <ActivityGrid locale={locale} activities={featuredActivities} committees={content.committees} />
+            <ActivityGrid locale={locale} activities={featuredActivities} units={[...content.committees, ...content.divisions]} />
             <div className="section-action">
               <Link className="button secondary" href={href(locale, '/activities')}>
                 {locale === 'ar' ? 'كل الأنشطة' : 'All activities'}
@@ -383,9 +426,160 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
         </div>
       </section>
 
+      <section className="site-section">
+        <div className="site-container">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'هيكلنا' : 'Our structure'}
+            title={locale === 'ar' ? 'كيف تعمل بمسا' : 'How BMSA is organized'}
+            lead={
+              locale === 'ar'
+                ? 'المجلس التنفيذي يقود، واللجان الدائمة تنفذ البرامج، وأقسام الدعم تمدّ الجميع بالتدريب والتصميم والتمويل والبحث.'
+                : 'The Executive Board leads, the standing committees run programs, and the support divisions power everyone with training, design, funding, and research.'
+            }
+          />
+          <div className="org-chart">
+            <div className="org-node org-eb">
+              <Crown size={20} />
+              <strong>{locale === 'ar' ? 'المجلس التنفيذي' : 'Executive Board'}</strong>
+              <span>{locale === 'ar' ? 'الرئيس، نائب الرئيس، الأمين العام' : 'President, Vice President, Secretary General'}</span>
+            </div>
+            <div className="org-branches">
+              <div className="org-node">
+                <strong>{locale === 'ar' ? '6 لجان دائمة' : '6 Standing Committees'}</strong>
+                <ul className="logo-cloud">
+                  {content.committees.map((unit) => (
+                    <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                      <Link href={`${href(locale, '/committees')}#${unit.slug}`} aria-label={unit.name}>
+                        <img src={unit.logo} alt="" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="org-node">
+                <strong>{locale === 'ar' ? '5 أقسام دعم' : '5 Support Divisions'}</strong>
+                <ul className="logo-cloud">
+                  {content.divisions.map((unit) => (
+                    <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                      <Link href={`${href(locale, '/divisions')}#${unit.slug}`} aria-label={unit.name}>
+                        <img src={unit.logo} alt="" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <BoardSection locale={locale} content={content} />
       <CtaBand locale={locale} />
     </main>
+  );
+}
+
+function UnitDetailList({
+  locale,
+  units,
+  activities,
+  jumpLabel,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  activities: Activity[];
+  jumpLabel: string;
+}) {
+  return (
+    <>
+      <nav className="anchor-chips site-container" aria-label={jumpLabel}>
+        {units.map((unit) => (
+          <a key={unit.slug} href={`#${unit.slug}`} style={{ '--accent': unit.color } as CSSProperties}>
+            {unit.name}
+          </a>
+        ))}
+      </nav>
+      <section className="site-section tight-top">
+        <div className="site-container committee-detail-list">
+          {units.map((unit, index) => {
+            const count = activities.filter((activity) => activity.committee === unit.slug).length;
+            return (
+              <article className="committee-detail" id={unit.slug} key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+                <div className="committee-logo-panel">
+                  <img src={unit.logo} alt={unit.name} />
+                </div>
+                <div>
+                  <span className="eyebrow">{unit.name}</span>
+                  <h2>{text(unit.fullName, locale)}</h2>
+                  <p>{text(unit.description, locale)}</p>
+                  <div className="program-grid">
+                    {unit.programs.map((program) => (
+                      <span key={text(program, locale)}>
+                        <CheckCircle2 size={16} />
+                        {text(program, locale)}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="committee-actions">
+                    <Link className="button secondary" href={`${href(locale, '/join')}?committee=${unit.slug}#apply`}>
+                      {locale === 'ar' ? `انضم إلى ${unit.name}` : `Join ${unit.name}`}
+                      <DirectionIcon locale={locale} />
+                    </Link>
+                    {count ? (
+                      <Link className="text-link" href={`${href(locale, '/activities')}?committee=${unit.slug}`}>
+                        {locale === 'ar' ? `أنشطة ${unit.name} (${count})` : `${unit.name} activities (${count})`}
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+                <strong className="section-index">{String(index + 1).padStart(2, '0')}</strong>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    </>
+  );
+}
+
+/** Small band that points visitors from committees to divisions and vice versa. */
+function CrossLinkBand({
+  locale,
+  units,
+  title,
+  body,
+  linkLabel,
+  path,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  title: string;
+  body: string;
+  linkLabel: string;
+  path: string;
+}) {
+  return (
+    <section className="site-section alt">
+      <div className="site-container cross-link">
+        <div>
+          <h2>{title}</h2>
+          <p>{body}</p>
+          <Link className="button secondary" href={href(locale, path)}>
+            {linkLabel}
+            <DirectionIcon locale={locale} />
+          </Link>
+        </div>
+        <ul className="logo-cloud">
+          {units.map((unit) => (
+            <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
+              <Link href={`${href(locale, path)}#${unit.slug}`} aria-label={unit.name}>
+                <img src={unit.logo} alt="" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -402,57 +596,24 @@ export function CommitteesPage({ locale, content }: { locale: Locale; content: B
             : 'Six standing committees, each with a clear focus and programs you can take part in from your first year.'
         }
       />
-      <nav className="anchor-chips site-container" aria-label={locale === 'ar' ? 'انتقل إلى لجنة' : 'Jump to a committee'}>
-        {content.committees.map((committee) => (
-          <a key={committee.slug} href={`#${committee.slug}`} style={{ '--accent': committee.color } as CSSProperties}>
-            {committee.name}
-          </a>
-        ))}
-      </nav>
-      <section className="site-section tight-top">
-        <div className="site-container committee-detail-list">
-          {content.committees.map((committee, index) => {
-            const count = content.activities.filter((activity) => activity.committee === committee.slug).length;
-            return (
-              <article
-                className="committee-detail"
-                id={committee.slug}
-                key={committee.slug}
-                style={{ '--accent': committee.color } as CSSProperties}
-              >
-                <div className="committee-logo-panel">
-                  <img src={committee.logo} alt={committee.name} />
-                </div>
-                <div>
-                  <span className="eyebrow">{committee.name}</span>
-                  <h2>{text(committee.fullName, locale)}</h2>
-                  <p>{text(committee.description, locale)}</p>
-                  <div className="program-grid">
-                    {committee.programs.map((program) => (
-                      <span key={text(program, locale)}>
-                        <CheckCircle2 size={16} />
-                        {text(program, locale)}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="committee-actions">
-                    <Link className="button secondary" href={`${href(locale, '/join')}?committee=${committee.slug}#apply`}>
-                      {locale === 'ar' ? `انضم إلى ${committee.name}` : `Join ${committee.name}`}
-                      <DirectionIcon locale={locale} />
-                    </Link>
-                    {count ? (
-                      <Link className="text-link" href={`${href(locale, '/activities')}?committee=${committee.slug}`}>
-                        {locale === 'ar' ? `أنشطة ${committee.name} (${count})` : `${committee.name} activities (${count})`}
-                      </Link>
-                    ) : null}
-                  </div>
-                </div>
-                <strong className="section-index">{String(index + 1).padStart(2, '0')}</strong>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+      <UnitDetailList
+        locale={locale}
+        units={content.committees}
+        activities={content.activities}
+        jumpLabel={locale === 'ar' ? 'انتقل إلى لجنة' : 'Jump to a committee'}
+      />
+      <CrossLinkBand
+        locale={locale}
+        units={content.divisions}
+        path="/divisions"
+        title={locale === 'ar' ? 'وراء كل لجنة، أقسام دعم' : 'Behind every committee: the support divisions'}
+        body={
+          locale === 'ar'
+            ? 'التدريب، تصميم المشاريع، الإعلام، التمويل، والبحث العلمي. أقسام تخدم كل اللجان، وتقدر تنضم لها كمان.'
+            : 'Training, project design, media, fundraising, and research. These divisions serve every committee, and you can join them too.'
+        }
+        linkLabel={locale === 'ar' ? 'اكتشف أقسام الدعم' : 'Explore support divisions'}
+      />
     </main>
   );
 }
@@ -466,23 +627,28 @@ export function DivisionsPage({ locale, content }: { locale: Locale; content: Bm
         title={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}
         lead={
           locale === 'ar'
-            ? 'الأقسام التي تجعل العمل الطلابي أكثر تنظيماً واستدامة.'
-            : 'The operational backbone that keeps student work organized and sustainable.'
+            ? 'خمسة أقسام تدعم كل اللجان: تدريب، مشاريع، إعلام، تمويل، وبحث علمي. ولكل قسم فريق تقدر تنضم له.'
+            : 'Five divisions that power every committee: training, projects, media, fundraising, and research. Each one has a team you can join.'
         }
       />
-      <section className="site-section">
-        <div className="site-container division-grid">
-          {content.divisions.map((division, i) => (
-            <article className="division-card" key={division.slug} style={{ '--accent': division.color, animationDelay: `${i * 80}ms` } as CSSProperties}>
-              <span className="division-bar" />
-              <img src={division.logo} alt={division.name} />
-              <h2>{division.name}</h2>
-              <h3>{text(division.fullName, locale)}</h3>
-              <p>{text(division.description, locale)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <UnitDetailList
+        locale={locale}
+        units={content.divisions}
+        activities={content.activities}
+        jumpLabel={locale === 'ar' ? 'انتقل إلى قسم' : 'Jump to a division'}
+      />
+      <CrossLinkBand
+        locale={locale}
+        units={content.committees}
+        path="/committees"
+        title={locale === 'ar' ? 'الأقسام تخدم اللجان الست' : 'Divisions serve all six committees'}
+        body={
+          locale === 'ar'
+            ? 'كل مشروع في SCOME أو SCOPH أو أي لجنة تانية بيعتمد على تدريب وتصميم وتمويل وتغطية من أقسام الدعم.'
+            : 'Every SCOME, SCOPH, or other committee project relies on training, design, funding, and coverage from the support divisions.'
+        }
+        linkLabel={locale === 'ar' ? 'استكشف اللجان' : 'Explore committees'}
+      />
       <CtaBand locale={locale} />
     </main>
   );
@@ -503,7 +669,7 @@ export function ActivitiesPage({ locale, content }: { locale: Locale; content: B
       />
       <section className="site-section">
         <div className="site-container">
-          <ActivityBrowser locale={locale} activities={content.activities} committees={content.committees} />
+          <ActivityBrowser locale={locale} activities={content.activities} units={[...content.committees, ...content.divisions]} />
         </div>
       </section>
     </main>
@@ -519,7 +685,8 @@ export function ActivityDetailPage({
   content: BmsaContent;
   activity: Activity;
 }) {
-  const committee = content.committees.find((item) => item.slug === activity.committee);
+  const isDivision = content.divisions.some((item) => item.slug === activity.committee);
+  const committee: OrgUnit | undefined = [...content.committees, ...content.divisions].find((item) => item.slug === activity.committee);
   const related = content.activities
     .filter((item) => item.slug !== activity.slug)
     .sort((a, b) => Number(b.committee === activity.committee) - Number(a.committee === activity.committee))
@@ -561,7 +728,9 @@ export function ActivityDetailPage({
 
           {committee ? (
             <aside className="form-card activity-committee">
-              <span className="eyebrow">{locale === 'ar' ? 'اللجنة المنظمة' : 'Organized by'}</span>
+              <span className="eyebrow">
+                {locale === 'ar' ? (isDivision ? 'القسم المنظم' : 'اللجنة المنظمة') : 'Organized by'}
+              </span>
               <img src={committee.logo} alt={committee.name} />
               <h2>{text(committee.fullName, locale)}</h2>
               <p>{text(committee.description, locale)}</p>
@@ -569,8 +738,8 @@ export function ActivityDetailPage({
                 {locale === 'ar' ? `انضم إلى ${committee.name}` : `Join ${committee.name}`}
                 <DirectionIcon locale={locale} />
               </Link>
-              <Link className="text-link" href={`${href(locale, '/committees')}#${committee.slug}`}>
-                {locale === 'ar' ? 'عن اللجنة' : 'About this committee'}
+              <Link className="text-link" href={`${href(locale, isDivision ? '/divisions' : '/committees')}#${committee.slug}`}>
+                {locale === 'ar' ? (isDivision ? 'عن القسم' : 'عن اللجنة') : isDivision ? 'About this division' : 'About this committee'}
               </Link>
             </aside>
           ) : null}
@@ -584,7 +753,7 @@ export function ActivityDetailPage({
               eyebrow={locale === 'ar' ? 'المزيد' : 'More'}
               title={locale === 'ar' ? 'أنشطة أخرى' : 'Other activities'}
             />
-            <ActivityGrid locale={locale} activities={related} committees={content.committees} />
+            <ActivityGrid locale={locale} activities={related} units={[...content.committees, ...content.divisions]} />
           </div>
         </section>
       ) : null}
@@ -703,8 +872,8 @@ export function JoinPage({
       phone: 'Phone (WhatsApp)',
       year: 'Academic year',
       chooseYear: 'Choose your year',
-      committee: 'Committee preference',
-      chooseCommittee: 'Choose a committee',
+      committee: 'Committee or division',
+      chooseCommittee: 'Choose a committee or division',
       motivation: 'Why do you want to join?',
       motivationHint: 'A few sentences about your interests and what you hope to do.',
       submit: 'Submit application',
@@ -719,8 +888,8 @@ export function JoinPage({
       phone: 'رقم الهاتف (واتساب)',
       year: 'الفرقة الدراسية',
       chooseYear: 'اختر الفرقة',
-      committee: 'اللجنة المفضلة',
-      chooseCommittee: 'اختر اللجنة',
+      committee: 'اللجنة أو القسم',
+      chooseCommittee: 'اختر لجنة أو قسماً',
       motivation: 'لماذا تريد الانضمام؟',
       motivationHint: 'بضع جمل عن اهتماماتك وما تتمنى أن تقدمه.',
       submit: 'إرسال الطلب',
@@ -728,13 +897,13 @@ export function JoinPage({
   }[locale];
 
   const requested = firstParam(params?.committee);
-  const preselected = content.committees.some((committee) => committee.slug === requested) ? requested : '';
+  const preselected = [...content.committees, ...content.divisions].some((unit) => unit.slug === requested) ? requested : '';
 
   const steps: { icon: LucideIcon; title: string; body: string }[] = [
     {
       icon: ClipboardList,
       title: locale === 'ar' ? 'قدّم الطلب' : 'Apply',
-      body: locale === 'ar' ? 'املأ النموذج واختر اللجنة الأقرب لاهتمامك.' : 'Fill in the form and pick the committee closest to your interests.',
+      body: locale === 'ar' ? 'املأ النموذج واختر اللجنة أو القسم الأقرب لاهتمامك.' : 'Fill in the form and pick the committee or division closest to your interests.',
     },
     {
       icon: MessageCircle,
@@ -807,14 +976,17 @@ export function JoinPage({
 
             <SectionHeader
               eyebrow={locale === 'ar' ? 'اختيار المسار' : 'Choose your path'}
-              title={locale === 'ar' ? 'ابحث عن اللجنة الأقرب لك' : 'Find the committee that fits you'}
+              title={locale === 'ar' ? 'ابحث عن المكان الأقرب لك' : 'Find the team that fits you'}
               lead={
                 locale === 'ar'
-                  ? 'راجع اللجان قبل إرسال الطلب، واختر المساحة التي تناسب اهتمامك.'
-                  : 'Review the committees before applying, then choose the one that matches your interests.'
+                  ? 'تقدر تنضم لإحدى اللجان الست، أو لأحد أقسام الدعم لو بتحب التدريب أو الإعلام أو التمويل أو البحث.'
+                  : 'Join one of the six committees, or a support division if you are into training, media, fundraising, or research.'
               }
             />
-            <CommitteeGrid locale={locale} content={content} compact />
+            <h3 className="grid-label">{locale === 'ar' ? 'اللجان الدائمة' : 'Standing Committees'}</h3>
+            <UnitGrid locale={locale} units={content.committees} basePath="/committees" compact />
+            <h3 className="grid-label">{locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}</h3>
+            <UnitGrid locale={locale} units={content.divisions} basePath="/divisions" compact />
           </div>
 
           <aside className="form-card" id="apply">
@@ -853,11 +1025,20 @@ export function JoinPage({
                   <option value="" disabled>
                     {labels.chooseCommittee}
                   </option>
-                  {content.committees.map((committee) => (
-                    <option key={committee.slug} value={committee.slug}>
-                      {committee.name}
-                    </option>
-                  ))}
+                  <optgroup label={locale === 'ar' ? 'اللجان الدائمة' : 'Standing Committees'}>
+                    {content.committees.map((committee) => (
+                      <option key={committee.slug} value={committee.slug}>
+                        {committee.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label={locale === 'ar' ? 'أقسام الدعم' : 'Support Divisions'}>
+                    {content.divisions.map((division) => (
+                      <option key={division.slug} value={division.slug}>
+                        {division.name}
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
               </label>
               <label>
@@ -875,19 +1056,29 @@ export function JoinPage({
   );
 }
 
-function CommitteeGrid({ locale, content, compact = false }: { locale: Locale; content: BmsaContent; compact?: boolean }) {
+function UnitGrid({
+  locale,
+  units,
+  basePath,
+  compact = false,
+}: {
+  locale: Locale;
+  units: OrgUnit[];
+  basePath: '/committees' | '/divisions';
+  compact?: boolean;
+}) {
   return (
-    <div className={compact ? 'committee-grid compact' : 'committee-grid'}>
-      {content.committees.map((committee, i) => (
+    <div className={['committee-grid', compact ? 'compact' : '', basePath === '/divisions' ? 'divisions' : ''].filter(Boolean).join(' ')}>
+      {units.map((unit, i) => (
         <article
           className="committee-card"
-          key={committee.slug}
-          style={{ '--accent': committee.color, animationDelay: `${i * 80}ms` } as CSSProperties}
+          key={unit.slug}
+          style={{ '--accent': unit.color, animationDelay: `${i * 80}ms` } as CSSProperties}
         >
-          <img src={committee.logo} alt={committee.name} />
-          <h3>{text(committee.fullName, locale)}</h3>
-          <p>{text(committee.description, locale)}</p>
-          <Link href={`${href(locale, '/committees')}#${committee.slug}`} aria-label={`${locale === 'ar' ? 'استكشف' : 'Explore'} ${committee.name}`}>
+          <img src={unit.logo} alt={unit.name} />
+          <h3>{text(unit.fullName, locale)}</h3>
+          <p>{text(unit.description, locale)}</p>
+          <Link href={`${href(locale, basePath)}#${unit.slug}`} aria-label={`${locale === 'ar' ? 'استكشف' : 'Explore'} ${unit.name}`}>
             {locale === 'ar' ? 'استكشف' : 'Explore'}
             <DirectionIcon locale={locale} />
           </Link>

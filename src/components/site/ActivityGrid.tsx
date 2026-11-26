@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { IconFor } from '@/components/site/icons';
 import { localizePath } from '@/lib/routes';
-import type { Activity, Committee, Locale } from '@/lib/types';
+import type { Activity, Locale, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
 
 export function activityHref(locale: Locale, slug: string) {
@@ -14,13 +14,14 @@ export function activityHref(locale: Locale, slug: string) {
 export default function ActivityGrid({
   locale,
   activities,
-  committees,
+  units,
 }: {
   locale: Locale;
   activities: Activity[];
-  committees: Committee[];
+  /** Committees and divisions, used to colour each card by the unit that owns the activity. */
+  units: OrgUnit[];
 }) {
-  const colorFor = (slug: string) => committees.find((committee) => committee.slug === slug)?.color;
+  const colorFor = (slug: string) => units.find((unit) => unit.slug === slug)?.color;
   const Arrow = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (

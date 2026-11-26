@@ -31,7 +31,7 @@ create table if not exists public.bmsa_images (
 create table if not exists public.bmsa_activities (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
-  committee text not null check (committee in ('scome', 'scope', 'scoph', 'scora', 'score', 'scorp')),
+  committee text not null check (committee in ('scome', 'scope', 'scoph', 'scora', 'score', 'scorp', 'cbsd', 'psd', 'pnsd', 'fsd', 'rsd')),
   title_en text not null,
   title_ar text,
   excerpt_en text,
@@ -397,6 +397,34 @@ values
     'SCORP - الصحة النفسية',
     'scale',
     6
+  ),
+  (
+    'soft-skills-training-day',
+    'cbsd',
+    'Soft Skills Training Day',
+    'يوم تدريب المهارات الناعمة',
+    'Communication, teamwork, and presentation trainings delivered by BMSA trainers.',
+    'تدريبات على التواصل والعمل الجماعي والعرض يقدمها مدربو بمسا.',
+    'CBSD ran a full day of interactive trainings on communication, teamwork, time management, and presentation skills for new and returning members.',
+    'نظم CBSD يوماً كاملاً من التدريبات التفاعلية على التواصل والعمل الجماعي وإدارة الوقت ومهارات العرض للأعضاء الجدد والقدامى.',
+    'CBSD - Capacity Building',
+    'CBSD - بناء القدرات',
+    'presentation',
+    7
+  ),
+  (
+    'content-creation-bootcamp',
+    'pnsd',
+    'Content Creation Bootcamp',
+    'معسكر صناعة المحتوى',
+    'Hands-on sessions on design, photography, and writing for health awareness content.',
+    'جلسات عملية في التصميم والتصوير والكتابة لمحتوى التوعية الصحية.',
+    'PNSD trained members to plan, design, and publish accurate and engaging health awareness content for BMSA campaigns and social media.',
+    'درّب PNSD الأعضاء على تخطيط وتصميم ونشر محتوى توعية صحية دقيق وجذاب لحملات بمسا وحساباتها على السوشيال ميديا.',
+    'PNSD - Media & Publications',
+    'PNSD - الإعلام والمنشورات',
+    'camera',
+    8
   )
 on conflict (slug) do update
 set title_en       = excluded.title_en,

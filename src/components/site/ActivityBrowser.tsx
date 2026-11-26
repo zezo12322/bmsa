@@ -2,27 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import ActivityGrid from '@/components/site/ActivityGrid';
-import type { Activity, Committee, Locale } from '@/lib/types';
+import type { Activity, Locale, OrgUnit } from '@/lib/types';
 
-/** Activities list with committee filter chips. The filter is mirrored in `?committee=` so it can be linked. */
+/** Activities list with committee/division filter chips. The filter is mirrored in `?committee=` so it can be linked. */
 export default function ActivityBrowser({
   locale,
   activities,
-  committees,
+  units,
 }: {
   locale: Locale;
   activities: Activity[];
-  committees: Committee[];
+  units: OrgUnit[];
 }) {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const fromUrl = new URLSearchParams(window.location.search).get('committee');
-    if (fromUrl && committees.some((committee) => committee.slug === fromUrl)) {
+    if (fromUrl && units.some((unit) => unit.slug === fromUrl)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from the URL after hydration
       setFilter(fromUrl);
     }
-  }, [committees]);
+  }, [units]);
 
   function choose(slug: string) {
     setFilter(slug);
@@ -32,36 +32,36 @@ export default function ActivityBrowser({
     window.history.replaceState(null, '', url);
   }
 
-  const usedCommittees = committees.filter((committee) => activities.some((activity) => activity.committee === committee.slug));
+  const usedUnits = units.filter((unit) => activities.some((activity) => activity.committee === unit.slug));
   const visible = filter === 'all' ? activities : activities.filter((activity) => activity.committee === filter);
 
   return (
     <>
-      {usedCommittees.length > 1 ? (
-        <div className="filter-chips" role="group" aria-label={locale === 'ar' ? 'تصفية حسب اللجنة' : 'Filter by committee'}>
+      {usedUnits.length > 1 ? (
+        <div className="filter-chips" role="group" aria-label={locale === 'ar' ? 'تصفية حسب اللجنة أو القسم' : 'Filter by committee or division'}>
           <button type="button" aria-pressed={filter === 'all'} onClick={() => choose('all')}>
             {locale === 'ar' ? 'الكل' : 'All'}
             <span>{activities.length}</span>
           </button>
-          {usedCommittees.map((committee) => (
+          {usedUnits.map((unit) => (
             <button
               type="button"
-              key={committee.slug}
-              aria-pressed={filter === committee.slug}
-              onClick={() => choose(committee.slug)}
-              style={{ '--accent': committee.color } as React.CSSProperties}
+              key={unit.slug}
+              aria-pressed={filter === unit.slug}
+              onClick={() => choose(unit.slug)}
+              style={{ '--accent': unit.color } as React.CSSProperties}
             >
-              {committee.name}
-              <span>{activities.filter((activity) => activity.committee === committee.slug).length}</span>
+              {unit.name}
+              <span>{activities.filter((activity) => activity.committee === unit.slug).length}</span>
             </button>
           ))}
         </div>
       ) : null}
 
       {visible.length ? (
-        <ActivityGrid locale={locale} activities={visible} committees={committees} />
+        <ActivityGrid locale={locale} activities={visible} units={units} />
       ) : (
-        <p className="empty-state">{locale === 'ar' ? 'لا توجد أنشطة لهذه اللجنة حالياً.' : 'No activities for this committee yet.'}</p>
+        <p className="empty-state">{locale === 'ar' ? 'لا توجد أنشطة هنا حالياً.' : 'No activities here yet.'}</p>
       )}
     </>
   );

@@ -22,7 +22,11 @@ export type Division = {
   description: LocalizedText;
   color: string;
   logo: string;
+  programs: LocalizedText[];
 };
+
+/** A standing committee or a support division — both can own activities and receive applications. */
+export type OrgUnit = Committee | Division;
 
 export type Activity = {
   id?: string;
