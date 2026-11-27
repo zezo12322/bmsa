@@ -60,31 +60,31 @@ values
     'to', 'SCOME Officer', 'مسؤول SCOME',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#2f9e44,#69db7c)', 4
+    'linear-gradient(135deg,#16101e,#4a3d5c)', 4
   ),
   (
     'to', 'SCOPE Officer', 'مسؤول SCOPE',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#1864ab,#4dabf7)', 5
+    'linear-gradient(135deg,#0a84c6,#5cb8e6)', 5
   ),
   (
     'to', 'SCOPH Officer', 'مسؤول SCOPH',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#d6336c,#f783ac)', 6
+    'linear-gradient(135deg,#f47a36,#f9a571)', 6
   ),
   (
     'to', 'SCORA Officer', 'مسؤول SCORA',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#e8590c,#ff922b)', 7
+    'linear-gradient(135deg,#bc2229,#e0575d)', 7
   ),
   (
     'to', 'SCORE Officer', 'مسؤول SCORE',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#862e9c,#cc5de8)', 8
+    'linear-gradient(135deg,#2a4a9c,#5f7fcc)', 8
   ),
   (
     'to', 'SCORP Officer', 'مسؤول SCORP',

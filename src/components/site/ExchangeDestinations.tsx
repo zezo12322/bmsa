@@ -6,8 +6,8 @@ import type { ExchangeDestination, ExchangeProgram, ExchangeRegion, Locale } fro
 import { text } from '@/lib/types';
 
 const programInfo: Record<ExchangeProgram, { label: string; color: string; en: string; ar: string }> = {
-  scope: { label: 'SCOPE', color: '#1971c2', en: 'Clinical', ar: 'إكلينيكي' },
-  score: { label: 'SCORE', color: '#862e9c', en: 'Research', ar: 'بحثي' },
+  scope: { label: 'SCOPE', color: '#0a84c6', en: 'Clinical', ar: 'إكلينيكي' },
+  score: { label: 'SCORE', color: '#2a4a9c', en: 'Research', ar: 'بحثي' },
 };
 
 const regionLabels: Record<ExchangeRegion, { en: string; ar: string }> = {
