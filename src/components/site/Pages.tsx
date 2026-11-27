@@ -27,7 +27,7 @@ import {
 import { siteCopy } from '@/lib/bmsa-data';
 import { localizePath } from '@/lib/routes';
 import { submitMembershipApplication } from '@/app/actions';
-import type { Activity, BmsaContent, Locale, OrgUnit } from '@/lib/types';
+import type { Activity, BmsaContent, Locale, NewsItem, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
 
 type NoticeParams = Record<string, string | string[] | undefined>;
@@ -798,6 +798,134 @@ export function ActivityDetailPage({
               title={locale === 'ar' ? 'أنشطة أخرى' : 'Other activities'}
             />
             <ActivityGrid locale={locale} activities={related} units={[...content.committees, ...content.divisions]} />
+          </div>
+        </section>
+      ) : null}
+    </main>
+  );
+}
+
+function newsHref(locale: Locale, slug: string) {
+  return href(locale, `/news/${slug}`);
+}
+
+function formatPostedAt(value: string | null | undefined, locale: Locale) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Africa/Cairo',
+  }).format(date);
+}
+
+/** News cards reuse the activity card styles. */
+function NewsGrid({ locale, items }: { locale: Locale; items: NewsItem[] }) {
+  const Arrow = locale === 'ar' ? ArrowLeft : ArrowRight;
+  return (
+    <div className="activity-grid">
+      {items.map((item, i) => {
+        const posted = formatPostedAt(item.postedAt, locale);
+        return (
+          <article className="activity-card" key={item.slug} style={{ animationDelay: `${i * 90}ms` }}>
+            <Link className="activity-thumb" href={newsHref(locale, item.slug)} tabIndex={-1} aria-hidden="true">
+              {item.imageUrl ? <img src={item.imageUrl} alt="" loading="lazy" /> : <IconFor name="calendar-days" size={42} />}
+            </Link>
+            <div className="activity-body">
+              <span className="activity-tag">
+                {text(item.tag, locale)}
+                {posted ? ` · ${posted}` : ''}
+              </span>
+              <h3>
+                <Link href={newsHref(locale, item.slug)}>{text(item.title, locale)}</Link>
+              </h3>
+              <p>{text(item.excerpt, locale)}</p>
+              <Link className="card-cta" href={newsHref(locale, item.slug)}>
+                {locale === 'ar' ? 'اقرأ المزيد' : 'Read more'}
+                <Arrow size={17} />
+              </Link>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+export function NewsPage({ locale, content }: { locale: Locale; content: BmsaContent }) {
+  return (
+    <main>
+      <PageHero
+        locale={locale}
+        badge={locale === 'ar' ? 'الأخبار' : 'News'}
+        title={locale === 'ar' ? 'أخبار بمسا' : 'BMSA news'}
+        lead={
+          locale === 'ar'
+            ? 'الريكروتمنت، أخبار الفريق، الشراكات، وكل جديد في بمسا بني سويف.'
+            : 'Recruitment, team announcements, partnerships, and everything new at BMSA Benisuef.'
+        }
+      />
+      <section className="site-section">
+        <div className="site-container">
+          {content.news.length ? (
+            <NewsGrid locale={locale} items={content.news} />
+          ) : (
+            <p>{locale === 'ar' ? 'لا توجد أخبار حاليًا.' : 'No news yet.'}</p>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export function NewsDetailPage({ locale, content, item }: { locale: Locale; content: BmsaContent; item: NewsItem }) {
+  const posted = formatPostedAt(item.postedAt, locale);
+  const more = content.news.filter((other) => other.slug !== item.slug).slice(0, 3);
+  const Back = locale === 'ar' ? ArrowRight : ArrowLeft;
+
+  return (
+    <main>
+      <section className="page-hero activity-hero">
+        <div className="site-container">
+          <Link className="back-link" href={href(locale, '/news')}>
+            <Back size={16} />
+            {locale === 'ar' ? 'كل الأخبار' : 'All news'}
+          </Link>
+          <span className="eyebrow">
+            {text(item.tag, locale)}
+            {posted ? ` · ${posted}` : ''}
+          </span>
+          <h1>{text(item.title, locale)}</h1>
+          <p>{text(item.excerpt, locale)}</p>
+        </div>
+      </section>
+
+      <section className="site-section">
+        <div className="site-container activity-detail">
+          <article>
+            {item.imageUrl ? (
+              <div className="activity-detail-media">
+                <img src={item.imageUrl} alt={text(item.title, locale)} />
+              </div>
+            ) : null}
+            <div className="activity-detail-body">
+              {text(item.body, locale)
+                .split(/\n{2,}/)
+                .map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {more.length ? (
+        <section className="site-section alt">
+          <div className="site-container">
+            <SectionHeader eyebrow={locale === 'ar' ? 'المزيد' : 'More'} title={locale === 'ar' ? 'أخبار أخرى' : 'More news'} />
+            <NewsGrid locale={locale} items={more} />
           </div>
         </section>
       ) : null}
