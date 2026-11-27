@@ -191,7 +191,7 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
             <ul className="orbit-grid" aria-label={locale === 'ar' ? 'اللجان الدائمة' : 'Standing committees'}>
               {content.committees.map((committee) => (
                 <li key={committee.slug} style={{ '--accent': committee.color } as CSSProperties}>
-                  <Link href={`${href(locale, '/committees')}#${committee.slug}`} aria-label={committee.name}>
+                  <Link href={`${href(locale, '/committees')}/${committee.slug}`} aria-label={committee.name}>
                     <img src={committee.logo} alt="" />
                   </Link>
                 </li>
@@ -209,7 +209,7 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
             {content.divisions.map((division) => (
               <li key={division.slug} style={{ '--accent': division.color } as CSSProperties}>
                 <Link
-                  href={`${href(locale, '/divisions')}#${division.slug}`}
+                  href={`${href(locale, '/divisions')}/${division.slug}`}
                   aria-label={`${division.name} — ${text(division.fullName, locale)}`}
                   title={text(division.fullName, locale)}
                 >
@@ -479,7 +479,7 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
                 <ul className="logo-cloud">
                   {content.committees.map((unit) => (
                     <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
-                      <Link href={`${href(locale, '/committees')}#${unit.slug}`} aria-label={unit.name}>
+                      <Link href={`${href(locale, '/committees')}/${unit.slug}`} aria-label={unit.name}>
                         <img src={unit.logo} alt="" />
                       </Link>
                     </li>
@@ -491,7 +491,7 @@ export function AboutPage({ locale, content }: { locale: Locale; content: BmsaCo
                 <ul className="logo-cloud">
                   {content.divisions.map((unit) => (
                     <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
-                      <Link href={`${href(locale, '/divisions')}#${unit.slug}`} aria-label={unit.name}>
+                      <Link href={`${href(locale, '/divisions')}/${unit.slug}`} aria-label={unit.name}>
                         <img src={unit.logo} alt="" />
                       </Link>
                     </li>
@@ -514,11 +514,13 @@ function UnitDetailList({
   units,
   activities,
   jumpLabel,
+  basePath,
 }: {
   locale: Locale;
   units: OrgUnit[];
   activities: Activity[];
   jumpLabel: string;
+  basePath: '/committees' | '/divisions';
 }) {
   return (
     <>
@@ -540,7 +542,9 @@ function UnitDetailList({
                 </div>
                 <div>
                   <span className="eyebrow">{unit.name}</span>
-                  <h2>{text(unit.fullName, locale)}</h2>
+                  <h2>
+                    <Link href={`${href(locale, basePath)}/${unit.slug}`}>{text(unit.fullName, locale)}</Link>
+                  </h2>
                   <p>{text(unit.description, locale)}</p>
                   <div className="program-grid">
                     {unit.programs.map((program) => (
@@ -551,9 +555,12 @@ function UnitDetailList({
                     ))}
                   </div>
                   <div className="committee-actions">
+                    <Link className="button primary" href={`${href(locale, basePath)}/${unit.slug}`}>
+                      {locale === 'ar' ? `اعرف أكثر عن ${unit.name}` : `More about ${unit.name}`}
+                      <DirectionIcon locale={locale} />
+                    </Link>
                     <Link className="button secondary" href={`${href(locale, '/join')}?committee=${unit.slug}#apply`}>
                       {locale === 'ar' ? `انضم إلى ${unit.name}` : `Join ${unit.name}`}
-                      <DirectionIcon locale={locale} />
                     </Link>
                     {count ? (
                       <Link className="text-link" href={`${href(locale, '/activities')}?committee=${unit.slug}`}>
@@ -607,7 +614,7 @@ function CrossLinkBand({
         <ul className="logo-cloud">
           {units.map((unit) => (
             <li key={unit.slug} style={{ '--accent': unit.color } as CSSProperties}>
-              <Link href={`${href(locale, path)}#${unit.slug}`} aria-label={unit.name}>
+              <Link href={`${href(locale, path)}/${unit.slug}`} aria-label={unit.name}>
                 <img src={unit.logo} alt="" />
               </Link>
             </li>
@@ -635,6 +642,7 @@ export function CommitteesPage({ locale, content }: { locale: Locale; content: B
         locale={locale}
         units={content.committees}
         activities={content.activities}
+        basePath="/committees"
         jumpLabel={locale === 'ar' ? 'انتقل إلى لجنة' : 'Jump to a committee'}
       />
       <CrossLinkBand
@@ -670,6 +678,7 @@ export function DivisionsPage({ locale, content }: { locale: Locale; content: Bm
         locale={locale}
         units={content.divisions}
         activities={content.activities}
+        basePath="/divisions"
         jumpLabel={locale === 'ar' ? 'انتقل إلى قسم' : 'Jump to a division'}
       />
       <CrossLinkBand
@@ -773,7 +782,7 @@ export function ActivityDetailPage({
                 {locale === 'ar' ? `انضم إلى ${committee.name}` : `Join ${committee.name}`}
                 <DirectionIcon locale={locale} />
               </Link>
-              <Link className="text-link" href={`${href(locale, isDivision ? '/divisions' : '/committees')}#${committee.slug}`}>
+              <Link className="text-link" href={`${href(locale, isDivision ? '/divisions' : '/committees')}/${committee.slug}`}>
                 {locale === 'ar' ? (isDivision ? 'عن القسم' : 'عن اللجنة') : isDivision ? 'About this division' : 'About this committee'}
               </Link>
             </aside>
@@ -1113,7 +1122,7 @@ function UnitGrid({
           <img src={unit.logo} alt={unit.name} />
           <h3>{text(unit.fullName, locale)}</h3>
           <p>{text(unit.description, locale)}</p>
-          <Link href={`${href(locale, basePath)}#${unit.slug}`} aria-label={`${locale === 'ar' ? 'استكشف' : 'Explore'} ${unit.name}`}>
+          <Link href={`${href(locale, basePath)}/${unit.slug}`} aria-label={`${locale === 'ar' ? 'استكشف' : 'Explore'} ${unit.name}`}>
             {locale === 'ar' ? 'استكشف' : 'Explore'}
             <DirectionIcon locale={locale} />
           </Link>

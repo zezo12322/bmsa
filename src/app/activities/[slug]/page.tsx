@@ -37,7 +37,7 @@ export default async function Page({ params }: Props) {
   if (!activity) notFound();
 
   return (
-    <SiteShell locale="en" current="activities">
+    <SiteShell locale="en" current="activities" path={`/activities/${slug}`}>
       <ActivityDetailPage locale="en" content={content} activity={activity} />
     </SiteShell>
   );
