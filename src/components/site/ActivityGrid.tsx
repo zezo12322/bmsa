@@ -6,6 +6,7 @@ import { IconFor } from '@/components/site/icons';
 import { localizePath } from '@/lib/routes';
 import type { Activity, Locale, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
+import { activityTag } from '@/lib/activity-groups';
 
 export function activityHref(locale: Locale, slug: string) {
   return localizePath(locale, `/activities/${slug}`);
@@ -36,7 +37,7 @@ export default function ActivityGrid({
             {activity.imageUrl ? <img src={activity.imageUrl} alt="" loading="lazy" /> : <IconFor name={activity.icon} size={42} />}
           </Link>
           <div className="activity-body">
-            <span className="activity-tag">{text(activity.tag, locale)}</span>
+            <span className="activity-tag">{activityTag(activity, locale)}</span>
             <h3>
               <Link href={activityHref(locale, activity.slug)}>{text(activity.title, locale)}</Link>
             </h3>

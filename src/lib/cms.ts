@@ -10,8 +10,10 @@ import type {
   ExchangeRegion,
   ExchangeStory,
   MerchItem,
+  NewsItem,
 } from './types';
 import { createPublicSupabaseClient } from '@/utils/supabase/public';
+import { withGroupCommittees } from './activity-groups';
 
 type CmsImageRow = {
   key: string;
@@ -32,6 +34,22 @@ type CmsActivityRow = {
   tag_ar: string | null;
   image_url: string | null;
   icon: string | null;
+  sort_order: number | null;
+};
+
+type CmsNewsRow = {
+  id: string;
+  slug: string;
+  title_en: string;
+  title_ar: string | null;
+  excerpt_en: string | null;
+  excerpt_ar: string | null;
+  body_en: string | null;
+  body_ar: string | null;
+  tag_en: string | null;
+  tag_ar: string | null;
+  image_url: string | null;
+  posted_at: string | null;
   sort_order: number | null;
 };
 
@@ -158,6 +176,22 @@ function mapActivity(row: CmsActivityRow): Activity {
   };
 }
 
+function mapNews(row: CmsNewsRow): NewsItem {
+  const excerptEn = row.excerpt_en || row.body_en || '';
+  const excerptAr = row.excerpt_ar || row.body_ar || excerptEn;
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: { en: row.title_en, ar: row.title_ar || row.title_en },
+    excerpt: { en: excerptEn, ar: excerptAr },
+    body: { en: row.body_en || excerptEn, ar: row.body_ar || excerptAr },
+    tag: { en: row.tag_en || 'BMSA', ar: row.tag_ar || row.tag_en || 'BMSA' },
+    imageUrl: assetUrl(row.image_url),
+    postedAt: row.posted_at,
+    sortOrder: row.sort_order || 0,
+  };
+}
+
 function mapMerch(row: CmsMerchRow): MerchItem {
   return {
     id: row.id,
@@ -280,9 +314,10 @@ async function getPublishedRows<T>(table: string) {
 }
 
 export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
-  const [imageRows, activityRows, merchRows, boardRows, destinationRows, storyRows, callRows] = await Promise.all([
+  const [imageRows, activityRows, newsRows, merchRows, boardRows, destinationRows, storyRows, callRows] = await Promise.all([
     getPublishedRows<CmsImageRow>('bmsa_images'),
     getPublishedRows<CmsActivityRow>('bmsa_activities'),
+    getPublishedRows<CmsNewsRow>('bmsa_news'),
     getPublishedRows<CmsMerchRow>('bmsa_merch_items'),
     getPublishedRows<CmsBoardRow>('bmsa_board_members'),
     getPublishedRows<CmsDestinationRow>('bmsa_exchange_destinations'),
@@ -293,7 +328,8 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
   return {
     committees: fallbackContent.committees,
     divisions: fallbackContent.divisions,
-    activities: activityRows.length ? activityRows.map(mapActivity) : fallbackContent.activities,
+    activities: withGroupCommittees(activityRows.length ? activityRows.map(mapActivity) : fallbackContent.activities),
+    news: newsRows.map(mapNews),
     merchItems: merchRows.length ? merchRows.map(mapMerch) : fallbackContent.merchItems,
     boardMembers: boardRows.length ? boardRows.map(mapBoard) : fallbackContent.boardMembers,
     exchangeDestinations: destinationRows.length ? destinationRows.map(mapDestination) : fallbackContent.exchangeDestinations,

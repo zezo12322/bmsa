@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Locale } from './types';
 
-export type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'exchange' | 'merch' | 'join';
+export type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'news' | 'exchange' | 'merch' | 'join';
 
 export const pagePaths: Record<PageKey, string> = {
   home: '/',
@@ -9,6 +9,7 @@ export const pagePaths: Record<PageKey, string> = {
   committees: '/committees',
   divisions: '/divisions',
   activities: '/activities',
+  news: '/news',
   exchange: '/exchange',
   merch: '/merch',
   join: '/join',
@@ -54,6 +55,10 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
       title: 'Activities',
       description: 'Campaigns, workshops, and exchanges run by BMSA Benisuef committees.',
     },
+    news: {
+      title: 'News',
+      description: 'Recruitment, team announcements, partnerships, and other updates from BMSA Benisuef.',
+    },
     exchange: {
       title: 'Exchange Programs',
       description:
@@ -89,6 +94,10 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
     activities: {
       title: 'الأنشطة',
       description: 'حملات وورش وبرامج تبادل تنفذها لجان بمسا بني سويف.',
+    },
+    news: {
+      title: 'الأخبار',
+      description: 'الريكروتمنت، أخبار الفريق، الشراكات، وتحديثات أخرى من بمسا بني سويف.',
     },
     exchange: {
       title: 'التبادل الدولي',

@@ -39,6 +39,8 @@ export type Activity = {
   imageUrl?: string | null;
   icon: string;
   sortOrder: number;
+  /** Every committee/division running this activity (see lib/activity-groups). */
+  committees?: string[];
 };
 
 export type MerchItem = {
@@ -115,10 +117,24 @@ export type ExchangeCall = {
   details: LocalizedText;
 };
 
+export type NewsItem = {
+  id?: string;
+  slug: string;
+  title: LocalizedText;
+  excerpt: LocalizedText;
+  body: LocalizedText;
+  tag: LocalizedText;
+  imageUrl?: string | null;
+  /** ISO timestamp (UTC) of the original post, if known. */
+  postedAt?: string | null;
+  sortOrder: number;
+};
+
 export type BmsaContent = {
   committees: Committee[];
   divisions: Division[];
   activities: Activity[];
+  news: NewsItem[];
   merchItems: MerchItem[];
   boardMembers: BoardMember[];
   exchangeDestinations: ExchangeDestination[];

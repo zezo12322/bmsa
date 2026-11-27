@@ -1986,6 +1986,8 @@ button, input, select, textarea { font: inherit; }
   gap: 32px;
   align-items: start;
 }
+/* News detail has no side card. */
+.activity-detail.single { grid-template-columns: minmax(0, 860px); }
 .activity-detail-media {
   display: grid;
   place-items: center;

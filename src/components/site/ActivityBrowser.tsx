@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import ActivityGrid from '@/components/site/ActivityGrid';
 import type { Activity, Locale, OrgUnit } from '@/lib/types';
+import { uniqueActivities } from '@/lib/activity-groups';
 
 /** Activities list with committee/division filter chips. The filter is mirrored in `?committee=` so it can be linked. */
 export default function ActivityBrowser({
@@ -32,8 +33,10 @@ export default function ActivityBrowser({
     window.history.replaceState(null, '', url);
   }
 
+  // "All" shows each shared activity once; a committee filter shows that committee's own row.
+  const all = uniqueActivities(activities);
   const usedUnits = units.filter((unit) => activities.some((activity) => activity.committee === unit.slug));
-  const visible = filter === 'all' ? activities : activities.filter((activity) => activity.committee === filter);
+  const visible = filter === 'all' ? all : activities.filter((activity) => activity.committee === filter);
 
   return (
     <>
@@ -41,7 +44,7 @@ export default function ActivityBrowser({
         <div className="filter-chips" role="group" aria-label={locale === 'ar' ? 'تصفية حسب اللجنة أو القسم' : 'Filter by committee or division'}>
           <button type="button" aria-pressed={filter === 'all'} onClick={() => choose('all')}>
             {locale === 'ar' ? 'الكل' : 'All'}
-            <span>{activities.length}</span>
+            <span>{all.length}</span>
           </button>
           {usedUnits.map((unit) => (
             <button
