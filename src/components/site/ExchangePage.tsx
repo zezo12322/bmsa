@@ -17,10 +17,11 @@ import ExchangeDestinations, { ProgramBadge } from '@/components/site/ExchangeDe
 import ExchangeCountdown from '@/components/site/ExchangeCountdown';
 import ExchangeApplicationForm from '@/components/site/ExchangeApplicationForm';
 import { CtaBand, DirectionIcon, PageHero, SectionHeader } from '@/components/site/Pages';
-import { siteCopy } from '@/lib/bmsa-data';
+import { siteCopy, exchangeDestinations as sampleDestinations } from '@/lib/bmsa-data';
 import { localizePath } from '@/lib/routes';
 import type { BmsaContent, ExchangeStory, Locale } from '@/lib/types';
 import { text } from '@/lib/types';
+import Flag from '@/components/site/Flag';
 
 type Bi = { en: string; ar: string };
 
@@ -166,7 +167,7 @@ function StoryCard({ story, locale }: { story: ExchangeStory; locale: Locale }) 
     <article className="story-card">
       <div className="story-head">
         <div className="story-avatar" aria-hidden="true">
-          {story.imageUrl ? <img src={story.imageUrl} alt="" loading="lazy" /> : <span>{story.flag}</span>}
+          {story.imageUrl ? <img src={story.imageUrl} alt="" loading="lazy" /> : <span><Flag emoji={story.flag} /></span>}
         </div>
         <div>
           <strong>{text(story.studentName, locale)}</strong>
@@ -182,7 +183,7 @@ function StoryCard({ story, locale }: { story: ExchangeStory; locale: Locale }) 
       <div className="story-meta">
         <ProgramBadge program={story.program} locale={locale} />
         <span>
-          {story.flag} {[text(story.host, locale), text(story.country, locale)].filter(Boolean).join(', ')}
+          <Flag emoji={story.flag} /> {[text(story.host, locale), text(story.country, locale)].filter(Boolean).join(', ')}
         </span>
       </div>
       {paragraphs.length ? (
@@ -288,9 +289,13 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
             eyebrow={locale === 'ar' ? 'الوجهات' : 'Destinations'}
             title={locale === 'ar' ? 'رايح فين؟' : 'Where could you go?'}
             lead={
-              locale === 'ar'
-                ? 'أمثلة من الوجهات المتاحة. الأماكن والأعداد بتتغير كل دورة تبادل، والقائمة النهائية بتعلنها SCOPE وSCORE مع فتح التقديم.'
-                : 'A sample of destinations. Places and numbers change every exchange cycle; SCOPE and SCORE announce the final list when applications open.'
+              content.exchangeDestinations === sampleDestinations
+                ? locale === 'ar'
+                  ? 'أمثلة من الوجهات المتاحة. الأماكن والأعداد بتتغير كل دورة تبادل، والقائمة النهائية بتعلنها SCOPE وSCORE مع فتح التقديم.'
+                  : 'A sample of destinations. Places and numbers change every exchange cycle; SCOPE and SCORE announce the final list when applications open.'
+                : locale === 'ar'
+                  ? 'الدول اللي في آخر عقود SCOPE وSCORE. الأماكن والأعداد بتتغير كل دورة تبادل.'
+                  : 'Countries in the latest SCOPE and SCORE contracts. Places and numbers change every exchange cycle.'
             }
           />
           <ExchangeDestinations locale={locale} destinations={content.exchangeDestinations} />

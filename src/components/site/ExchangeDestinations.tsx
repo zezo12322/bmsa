@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Building2, Languages, MapPin, Stethoscope } from 'lucide-react';
 import type { ExchangeDestination, ExchangeProgram, ExchangeRegion, Locale } from '@/lib/types';
 import { text } from '@/lib/types';
+import Flag from '@/components/site/Flag';
 
 const programInfo: Record<ExchangeProgram, { label: string; color: string; en: string; ar: string }> = {
   scope: { label: 'SCOPE', color: '#0a84c6', en: 'Clinical', ar: 'إكلينيكي' },
@@ -92,7 +93,7 @@ export default function ExchangeDestinations({
             <article className="destination-card" key={destination.slug}>
               <header>
                 <span className="destination-flag" aria-hidden="true">
-                  {destination.flag}
+                  <Flag emoji={destination.flag} />
                 </span>
                 <div>
                   <h3>{text(destination.country, locale)}</h3>
