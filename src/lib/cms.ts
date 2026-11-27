@@ -6,6 +6,10 @@ import type {
   BmsaContent,
   ExchangeCall,
   ExchangeDestination,
+  DocumentCategory,
+  DocumentItem,
+  Opportunity,
+  Stat,
   ExchangeProgram,
   ExchangeRegion,
   ExchangeStory,
@@ -35,6 +39,38 @@ type CmsActivityRow = {
   image_url: string | null;
   icon: string | null;
   sort_order: number | null;
+};
+
+type CmsStatRow = {
+  value: string;
+  label_en: string;
+  label_ar: string | null;
+  sublabel_en: string | null;
+  sublabel_ar: string | null;
+};
+
+type CmsOpportunityRow = {
+  id: string;
+  title_en: string;
+  title_ar: string | null;
+  body_en: string | null;
+  body_ar: string | null;
+  tag_en: string | null;
+  tag_ar: string | null;
+  apply_url: string | null;
+  opens_at: string | null;
+  closes_at: string;
+};
+
+type CmsDocumentRow = {
+  id: string;
+  title_en: string;
+  title_ar: string | null;
+  description_en: string | null;
+  description_ar: string | null;
+  category: string | null;
+  year: number | null;
+  file_url: string;
 };
 
 type CmsNewsRow = {
@@ -245,6 +281,39 @@ function bilingual(en: string | null | undefined, ar: string | null | undefined)
   return { en: enText, ar: ar || enText };
 }
 
+function mapStat(row: CmsStatRow): Stat {
+  return {
+    value: row.value,
+    label: bilingual(row.label_en, row.label_ar),
+    sublabel: bilingual(row.sublabel_en, row.sublabel_ar),
+  };
+}
+
+function mapOpportunity(row: CmsOpportunityRow): Opportunity {
+  return {
+    id: row.id,
+    title: bilingual(row.title_en, row.title_ar),
+    body: bilingual(row.body_en, row.body_ar),
+    tag: bilingual(row.tag_en, row.tag_ar),
+    applyUrl: row.apply_url,
+    opensAt: row.opens_at,
+    closesAt: row.closes_at,
+  };
+}
+
+const DOCUMENT_CATEGORIES: DocumentCategory[] = ['bylaws', 'reports', 'manuals', 'forms', 'other'];
+
+function mapDocument(row: CmsDocumentRow): DocumentItem {
+  return {
+    id: row.id,
+    title: bilingual(row.title_en, row.title_ar),
+    description: bilingual(row.description_en, row.description_ar),
+    category: DOCUMENT_CATEGORIES.includes(row.category as DocumentCategory) ? (row.category as DocumentCategory) : 'other',
+    year: row.year,
+    fileUrl: row.file_url,
+  };
+}
+
 const REGIONS: ExchangeRegion[] = ['europe', 'americas', 'asia', 'africa', 'middle-east', 'oceania'];
 
 function mapDestination(row: CmsDestinationRow): ExchangeDestination {
@@ -316,7 +385,7 @@ async function getPublishedRows<T>(table: string) {
 }
 
 export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
-  const [imageRows, activityRows, newsRows, merchRows, boardRows, destinationRows, storyRows, callRows] = await Promise.all([
+  const [imageRows, activityRows, newsRows, merchRows, boardRows, destinationRows, storyRows, callRows, statRows, opportunityRows, documentRows] = await Promise.all([
     getPublishedRows<CmsImageRow>('bmsa_images'),
     getPublishedRows<CmsActivityRow>('bmsa_activities'),
     getPublishedRows<CmsNewsRow>('bmsa_news'),
@@ -325,6 +394,9 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     getPublishedRows<CmsDestinationRow>('bmsa_exchange_destinations'),
     getPublishedRows<CmsStoryRow>('bmsa_exchange_stories'),
     getPublishedRows<CmsCallRow>('bmsa_exchange_calls'),
+    getPublishedRows<CmsStatRow>('bmsa_stats'),
+    getPublishedRows<CmsOpportunityRow>('bmsa_opportunities'),
+    getPublishedRows<CmsDocumentRow>('bmsa_documents'),
   ]);
 
   return {
@@ -337,6 +409,9 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     exchangeDestinations: destinationRows.length ? destinationRows.map(mapDestination) : fallbackContent.exchangeDestinations,
     exchangeStories: storyRows.length ? storyRows.map(mapStory) : fallbackContent.exchangeStories,
     exchangeCalls: callRows.length ? callRows.map(mapCall) : fallbackContent.exchangeCalls,
+    stats: statRows.length ? statRows.map(mapStat) : fallbackContent.stats,
+    opportunities: opportunityRows.map(mapOpportunity),
+    documents: documentRows.map(mapDocument),
     images: imageMap(imageRows),
   };
 });

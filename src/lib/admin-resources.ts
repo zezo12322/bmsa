@@ -2,8 +2,10 @@ export type AdminField = {
   name: string;
   label: string;
   /** `datetime` is entered in Egypt time and stored as a UTC timestamp. */
-  type: 'text' | 'textarea' | 'checkbox' | 'number' | 'select' | 'datetime';
+  type: 'text' | 'textarea' | 'checkbox' | 'number' | 'select' | 'datetime' | 'date';
   required?: boolean;
+  /** Checkbox state for a new row. Defaults to checked (most checkboxes are "Published"). */
+  defaultChecked?: boolean;
   helper?: string;
   options?: { label: string; value: string }[];
   parseAs?: 'array';
@@ -208,7 +210,7 @@ export const adminResources: Record<string, AdminResource> = {
       { name: 'language_ar', label: 'Language requirement AR', type: 'text' },
       { name: 'notes_en', label: 'Notes EN', type: 'textarea', helper: 'Optional, e.g. number of spots or months available.' },
       { name: 'notes_ar', label: 'Notes AR', type: 'textarea' },
-      { name: 'sold_out', label: 'Sold out until next season', type: 'checkbox', helper: 'Tick when all seats in the current contracts are taken. Untick when new contracts arrive.' },
+      { name: 'sold_out', label: 'Sold out until next season', type: 'checkbox', defaultChecked: false, helper: 'Tick when all seats in the current contracts are taken. Untick when new contracts arrive.' },
       { name: 'sort_order', label: 'Sort order', type: 'number' },
       { name: 'published', label: 'Published', type: 'checkbox' },
     ],
@@ -250,6 +252,94 @@ export const adminResources: Record<string, AdminResource> = {
       { name: 'image_url', label: 'Photo URL', type: 'text' },
       { name: 'sort_order', label: 'Sort order', type: 'number' },
       { name: 'published', label: 'Published', type: 'checkbox' },
+    ],
+  },
+  stats: {
+    key: 'stats',
+    title: 'Home Numbers',
+    description: 'Numbers in the band under the home hero. The activity count is added automatically from the published activities.',
+    table: 'bmsa_stats',
+    titleField: 'value',
+    subtitleField: 'label_en',
+    fields: [
+      { name: 'value', label: 'Number', type: 'text', required: true, helper: 'e.g. 500+' },
+      { name: 'label_en', label: 'Label EN', type: 'text', required: true },
+      { name: 'label_ar', label: 'Label AR', type: 'text' },
+      { name: 'sublabel_en', label: 'Small text EN', type: 'text' },
+      { name: 'sublabel_ar', label: 'Small text AR', type: 'text' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'published', label: 'Published', type: 'checkbox' },
+    ],
+  },
+  opportunities: {
+    key: 'opportunities',
+    title: 'Opportunities',
+    description: 'Open calls (OC calls, team recruitment, delegations). A call shows as open until its deadline, then moves to "Closed" by itself.',
+    table: 'bmsa_opportunities',
+    titleField: 'title_en',
+    subtitleField: 'tag_en',
+    fields: [
+      { name: 'title_en', label: 'Title EN', type: 'text', required: true },
+      { name: 'title_ar', label: 'Title AR', type: 'text' },
+      { name: 'tag_en', label: 'Type EN', type: 'text', helper: 'e.g. OC call, Team recruitment' },
+      { name: 'tag_ar', label: 'Type AR', type: 'text' },
+      { name: 'body_en', label: 'Details EN', type: 'textarea' },
+      { name: 'body_ar', label: 'Details AR', type: 'textarea' },
+      { name: 'apply_url', label: 'Apply link', type: 'text', helper: 'Google Form or any link where people apply.' },
+      { name: 'opens_at', label: 'Opens (Egypt time)', type: 'datetime', helper: 'Leave empty to show it as open right away.' },
+      { name: 'closes_at', label: 'Deadline (Egypt time)', type: 'datetime', required: true },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'published', label: 'Published', type: 'checkbox' },
+    ],
+  },
+  documents: {
+    key: 'documents',
+    title: 'Documents',
+    description: 'Public documents library: bylaws, annual reports, manuals, forms.',
+    table: 'bmsa_documents',
+    titleField: 'title_en',
+    subtitleField: 'category',
+    fields: [
+      { name: 'title_en', label: 'Title EN', type: 'text', required: true },
+      { name: 'title_ar', label: 'Title AR', type: 'text' },
+      {
+        name: 'category',
+        label: 'Category',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Bylaws & regulations', value: 'bylaws' },
+          { label: 'Reports', value: 'reports' },
+          { label: 'Manuals & guides', value: 'manuals' },
+          { label: 'Forms', value: 'forms' },
+          { label: 'Other', value: 'other' },
+        ],
+      },
+      { name: 'year', label: 'Year', type: 'number', helper: 'e.g. 2026. Leave 0 if it has no year.' },
+      { name: 'file_url', label: 'File URL', type: 'text', required: true, helper: 'Upload the PDF to Supabase Storage (bucket bmsa-images, folder documents/) and paste its public URL, or paste a Google Drive share link.' },
+      { name: 'description_en', label: 'Description EN', type: 'textarea' },
+      { name: 'description_ar', label: 'Description AR', type: 'textarea' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'published', label: 'Published', type: 'checkbox' },
+    ],
+  },
+  certificates: {
+    key: 'certificates',
+    title: 'Certificates',
+    description: 'Certificates anyone can verify by code on the website. The list itself is never public: only one exact code is looked up at a time.',
+    table: 'bmsa_certificates',
+    titleField: 'code',
+    subtitleField: 'holder_name_en',
+    fields: [
+      { name: 'code', label: 'Certificate code', type: 'text', required: true, helper: 'Use a code that cannot be guessed, e.g. BMSA-26-7KQ3XP (not 001, 002...).' },
+      { name: 'holder_name_en', label: 'Name EN', type: 'text', required: true },
+      { name: 'holder_name_ar', label: 'Name AR', type: 'text' },
+      { name: 'title_en', label: 'Activity / training EN', type: 'text', required: true },
+      { name: 'title_ar', label: 'Activity / training AR', type: 'text' },
+      { name: 'role_en', label: 'Role EN', type: 'text', helper: 'e.g. Participant, Organizer, Trainer' },
+      { name: 'role_ar', label: 'Role AR', type: 'text' },
+      { name: 'issued_on', label: 'Issued on', type: 'date' },
+      { name: 'published', label: 'Valid', type: 'checkbox', helper: 'Untick to revoke: the code will then show as not found.' },
     ],
   },
   images: {

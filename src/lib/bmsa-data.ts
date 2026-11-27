@@ -8,6 +8,7 @@ import type {
   ExchangeDestination,
   ExchangeStory,
   MerchItem,
+  Stat,
 } from './types';
 
 export const siteCopy = {
@@ -36,13 +37,11 @@ export const siteCopy = {
       exchange: 'Exchange',
       merch: 'Merch',
       join: 'Join',
+      opportunities: 'Opportunities',
+      documents: 'Documents',
+      verify: 'Verify a certificate',
+      glossary: 'Glossary',
     },
-    stats: [
-      ['500+', 'Active Members', 'Building tomorrow\'s physicians'],
-      ['40+', 'Campaigns Launched', 'Public health & community impact'],
-      ['6 + 5', 'Committees & Divisions', '6 standing committees, 5 support divisions'],
-      ['10+', 'Years of Impact', 'IFMSA-Egypt local committee'],
-    ],
   },
   ar: {
     brand: 'بمسا بني سويف',
@@ -68,13 +67,11 @@ export const siteCopy = {
       exchange: 'التبادل',
       merch: 'المتجر',
       join: 'انضم',
+      opportunities: 'الفرص المفتوحة',
+      documents: 'الملفات والوثائق',
+      verify: 'التحقق من شهادة',
+      glossary: 'قاموس الاختصارات',
     },
-    stats: [
-      ['500+', 'عضو نشط', 'نبني أطباء الغد'],
-      ['40+', 'حملة أُطلقت', 'صحة عامة وأثر مجتمعي'],
-      ['6 + 5', 'لجان وأقسام', '6 لجان دائمة و5 أقسام دعم'],
-      ['10+', 'عام من التأثير', 'لجنة محلية في IFMSA-Egypt'],
-    ],
   },
 };
 
@@ -811,6 +808,13 @@ export const exchangeStories: ExchangeStory[] = [];
 /** Application calls (with dates) are added in the admin panel (Admin → Exchange Calls); no dates are invented here. */
 export const exchangeCalls: ExchangeCall[] = [];
 
+/** Home page numbers, used when the CMS has none (Admin -> Home Numbers). */
+const stats: Stat[] = [
+  { value: '500+', label: { en: 'Active Members', ar: 'عضو نشط' }, sublabel: { en: 'Building tomorrow’s physicians', ar: 'نبني أطباء الغد' } },
+  { value: '6 + 5', label: { en: 'Committees & Divisions', ar: 'لجان وأقسام' }, sublabel: { en: '6 standing committees, 5 support divisions', ar: '6 لجان دائمة و5 أقسام دعم' } },
+  { value: '10+', label: { en: 'Years of Impact', ar: 'عام من التأثير' }, sublabel: { en: 'IFMSA-Egypt local committee', ar: 'لجنة محلية في IFMSA-Egypt' } },
+];
+
 export const fallbackContent: BmsaContent = {
   committees,
   divisions,
@@ -822,5 +826,9 @@ export const fallbackContent: BmsaContent = {
   exchangeDestinations,
   exchangeStories,
   exchangeCalls,
+  stats,
+  /** Opportunities and documents are added from the admin panel; none are invented here. */
+  opportunities: [],
+  documents: [],
   images: {},
 };

@@ -161,7 +161,15 @@ export function CtaBand({ locale }: { locale: Locale }) {
 
 export function HomePage({ locale, content }: { locale: Locale; content: BmsaContent }) {
   const copy = siteCopy[locale];
-  const featuredActivities = uniqueActivities(content.activities).slice(0, 3);
+  const allActivities = uniqueActivities(content.activities);
+  const featuredActivities = allActivities.slice(0, 3);
+  // The activity count always comes from the published activities, so it never goes stale.
+  const activityStat = {
+    value: String(allActivities.length),
+    label: { en: 'Activities', ar: 'نشاط' },
+    sublabel: { en: 'Campaigns, workshops & events on this site', ar: 'حملات وورش وفعاليات على الموقع' },
+  };
+  const stats = [...content.stats.slice(0, 1), activityStat, ...content.stats.slice(1)];
 
   return (
     <main>
@@ -225,11 +233,11 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
 
       <section className="stats-band" aria-label={locale === 'ar' ? 'أرقام' : 'Key numbers'}>
         <div className="site-container stats-grid">
-          {copy.stats.map(([value, label, sublabel]) => (
-            <div key={label}>
-              <strong>{value}</strong>
-              <span>{label}</span>
-              {sublabel ? <small>{sublabel}</small> : null}
+          {stats.map((stat) => (
+            <div key={stat.label.en}>
+              <strong>{stat.value}</strong>
+              <span>{text(stat.label, locale)}</span>
+              {text(stat.sublabel, locale) ? <small>{text(stat.sublabel, locale)}</small> : null}
             </div>
           ))}
         </div>
