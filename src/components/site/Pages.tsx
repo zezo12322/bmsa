@@ -904,7 +904,7 @@ export function NewsDetailPage({ locale, content, item }: { locale: Locale; cont
       </section>
 
       <section className="site-section">
-        <div className="site-container activity-detail">
+        <div className="site-container activity-detail single">
           <article>
             {item.imageUrl ? (
               <div className="activity-detail-media">
