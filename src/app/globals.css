@@ -2365,13 +2365,13 @@ button, input, select, textarea { font: inherit; }
   gap: 24px;
   padding: 32px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, color-mix(in srgb, #1971c2 10%, #fff), color-mix(in srgb, #862e9c 10%, #fff));
+  background: linear-gradient(135deg, color-mix(in srgb, #0a84c6 10%, #fff), color-mix(in srgb, #2a4a9c 10%, #fff));
   border: 1px solid var(--line);
 }
-.incoming > svg { flex-shrink: 0; color: #1971c2; }
+.incoming > svg { flex-shrink: 0; color: #0a84c6; }
 .incoming h2 { margin: 6px 0 8px; font-size: 1.6rem; font-weight: 900; }
 .incoming p { margin: 0; color: var(--muted); max-width: 680px; }
-.incoming .eyebrow { color: #1971c2; }
+.incoming .eyebrow { color: #0a84c6; }
 .incoming .button { flex-shrink: 0; margin-inline-start: auto; }
 
 .faq-layout { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px; align-items: start; }
@@ -2397,7 +2397,7 @@ button, input, select, textarea { font: inherit; }
 .faq-list details p { margin: 0 0 16px; color: var(--muted); }
 
 .exchange-teaser {
-  background: linear-gradient(120deg, #0b2a4a 0%, #1971c2 55%, #5f3dc4 100%);
+  background: linear-gradient(120deg, #0b2a4a 0%, #0a84c6 55%, #2a4a9c 100%);
   color: #fff;
 }
 .exchange-teaser-inner {
@@ -2438,7 +2438,7 @@ button, input, select, textarea { font: inherit; }
   padding: 26px 30px;
   border-radius: var(--radius-lg);
   color: #fff;
-  background: linear-gradient(120deg, #0b2a4a 0%, #1971c2 60%, #5f3dc4 100%);
+  background: linear-gradient(120deg, #0b2a4a 0%, #0a84c6 60%, #2a4a9c 100%);
   box-shadow: var(--shadow);
 }
 .countdown.is-open { background: linear-gradient(120deg, #7f1f17 0%, #c0392b 60%, #e8590c 100%); }
@@ -2704,7 +2704,7 @@ button, input, select, textarea { font: inherit; }
   padding: 22px 26px;
   border-radius: var(--radius-lg);
   color: #fff;
-  background: linear-gradient(120deg, #0b2a4a 0%, #1971c2 60%, #5f3dc4 100%);
+  background: linear-gradient(120deg, #0b2a4a 0%, #0a84c6 60%, #2a4a9c 100%);
   transition: transform var(--duration-base) var(--ease-spring);
 }
 .unit-exchange:hover { transform: translateY(-2px); }
@@ -2724,4 +2724,17 @@ button, input, select, textarea { font: inherit; }
   .unit-hero-inner { padding: 36px 0 48px; gap: 28px; }
   .unit-programs { grid-template-columns: 1fr; }
   .unit-logo-card { aspect-ratio: 16 / 9; padding: 18px; }
+}
+
+/* Unit colours come from the logos; light ones (SCOPH orange, RSD yellow) are too pale
+   as text on white, so text uses a darker mix of the same colour. Fills keep the original. */
+.committee-card a,
+.committee-detail .eyebrow,
+.activity-card .activity-tag,
+.activity-card .card-cta,
+.activity-committee .eyebrow,
+.anchor-chips a:not(:hover),
+.filter-chips button[aria-pressed='false']:not(:hover),
+.program-badge {
+  color: color-mix(in srgb, var(--accent, var(--primary)) 78%, #000);
 }

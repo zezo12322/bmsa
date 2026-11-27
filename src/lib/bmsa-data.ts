@@ -88,7 +88,7 @@ export const committees: Committee[] = [
       en: 'Improves medical education through peer teaching, skills workshops, curriculum advocacy, and student representation.',
       ar: 'تطوّر التعليم الطبي عبر التعليم بين الزملاء، ورش المهارات، مناصرة تطوير المناهج، وتمثيل الطلاب.',
     },
-    color: '#2f9e44',
+    color: '#16101e',
     logo: '/images/logos/scome.png',
     programs: [
       { en: 'Clinical Skills Workshops', ar: 'ورش المهارات الإكلينيكية' },
@@ -108,7 +108,7 @@ export const committees: Committee[] = [
       en: 'Runs clinical exchange opportunities that help students experience healthcare systems around the world.',
       ar: 'تنظم فرص التبادل الإكلينيكي ليستكشف الطلاب أنظمة الرعاية الصحية حول العالم.',
     },
-    color: '#1971c2',
+    color: '#0a84c6',
     logo: '/images/logos/scope.png',
     programs: [
       { en: 'Outgoing Exchanges', ar: 'التبادل الخارجي' },
@@ -128,7 +128,7 @@ export const committees: Committee[] = [
       en: 'Builds community health campaigns, screenings, and awareness programs across Beni Suef.',
       ar: 'تنفذ حملات صحة عامة، فحوصات، وبرامج توعية مجتمعية داخل بني سويف.',
     },
-    color: '#d6336c',
+    color: '#f47a36',
     logo: '/images/logos/scoph.png',
     programs: [
       { en: 'Free Screening Clinics', ar: 'قوافل فحص مجانية' },
@@ -148,7 +148,7 @@ export const committees: Committee[] = [
       en: 'Promotes reproductive health, HIV awareness, gender equity, and youth-friendly health education.',
       ar: 'تعزز الصحة الإنجابية، التوعية بفيروس HIV، العدالة الجندرية، والتثقيف الصحي المناسب للشباب.',
     },
-    color: '#e8590c',
+    color: '#bc2229',
     logo: '/images/logos/scora.png',
     programs: [
       { en: 'World AIDS Day Events', ar: 'فعاليات اليوم العالمي للإيدز' },
@@ -168,7 +168,7 @@ export const committees: Committee[] = [
       en: 'Connects students with research projects, scientific writing, statistics training, and research exchange opportunities.',
       ar: 'تربط الطلاب بالمشاريع البحثية، الكتابة العلمية، تدريب الإحصاء، وفرص التبادل البحثي.',
     },
-    color: '#862e9c',
+    color: '#2a4a9c',
     logo: '/images/logos/score.png',
     programs: [
       { en: 'Research Exchanges Abroad', ar: 'تبادل بحثي بالخارج' },
@@ -188,7 +188,7 @@ export const committees: Committee[] = [
       en: 'Advocates for human rights, refugee health, medical ethics, inclusion, peace, and social justice.',
       ar: 'تناصر حقوق الإنسان، صحة اللاجئين، أخلاقيات الطب، الدمج، السلام، والعدالة الاجتماعية.',
     },
-    color: '#0c8599',
+    color: '#5a923a',
     logo: '/images/logos/scorp.png',
     programs: [
       { en: 'Human Rights in Medicine', ar: 'حقوق الإنسان في الطب' },
@@ -595,7 +595,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#2f9e44,#69db7c)',
+    gradient: 'linear-gradient(135deg,#16101e,#4a3d5c)',
     sortOrder: 4,
   },
   {
@@ -605,7 +605,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#1864ab,#4dabf7)',
+    gradient: 'linear-gradient(135deg,#0a84c6,#5cb8e6)',
     sortOrder: 5,
   },
   {
@@ -615,7 +615,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#d6336c,#f783ac)',
+    gradient: 'linear-gradient(135deg,#f47a36,#f9a571)',
     sortOrder: 6,
   },
   {
@@ -625,7 +625,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#e8590c,#ff922b)',
+    gradient: 'linear-gradient(135deg,#bc2229,#e0575d)',
     sortOrder: 7,
   },
   {
@@ -635,7 +635,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#862e9c,#cc5de8)',
+    gradient: 'linear-gradient(135deg,#2a4a9c,#5f7fcc)',
     sortOrder: 8,
   },
   {
@@ -645,7 +645,7 @@ export const boardMembers: BoardMember[] = [
     memberName: { en: 'TBD', ar: 'يُعلن لاحقاً' },
     imageUrl: null,
     icon: 'user',
-    gradient: 'linear-gradient(135deg,#0c8599,#66d9e8)',
+    gradient: 'linear-gradient(135deg,#5a923a,#8cc06a)',
     sortOrder: 9,
   },
   {
