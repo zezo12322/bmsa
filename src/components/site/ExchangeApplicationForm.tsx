@@ -126,6 +126,7 @@ export default function ExchangeApplicationForm({
     return () => window.clearTimeout(id);
   }, []);
 
+  const available = destinations.filter((destination) => !destination.soldOut);
   const callState = now === null ? null : currentCallState(calls, now);
   const openCall = callState?.status === 'open' ? callState.call : null;
 
@@ -248,13 +249,13 @@ export default function ExchangeApplicationForm({
         ))}
       </fieldset>
 
-      {destinations.length ? (
+      {available.length ? (
         <fieldset className="destination-picker">
           <legend>
             {t.destinations} <span className="picked-count">{picked.length}/{MAX_DESTINATIONS}</span>
           </legend>
           <div>
-            {destinations.map((destination) => {
+            {available.map((destination) => {
               const checked = picked.includes(destination.slug);
               return (
                 <label key={destination.slug} className={checked ? 'checked' : undefined}>

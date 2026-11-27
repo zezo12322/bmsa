@@ -83,6 +83,15 @@ export default function ExchangeDestinations({
         ) : null}
       </div>
 
+      {destinations.length && destinations.every((destination) => destination.soldOut) ? (
+        <p className="sold-out-notice" role="status">
+          {t(
+            'All seats in the current contracts are taken. New contracts come with the next season.',
+            'كل أماكن العقود الحالية اتحجزت. العقود الجديدة هتنزل السيزون الجاي.',
+          )}
+        </p>
+      ) : null}
+
       <p className="destination-count" aria-live="polite">
         {locale === 'ar' ? `${visible.length} وجهة` : `${visible.length} destination${visible.length === 1 ? '' : 's'}`}
       </p>
@@ -90,7 +99,7 @@ export default function ExchangeDestinations({
       {visible.length ? (
         <div className="destination-grid">
           {visible.map((destination) => (
-            <article className="destination-card" key={destination.slug}>
+            <article className={destination.soldOut ? 'destination-card sold-out' : 'destination-card'} key={destination.slug}>
               <header>
                 <span className="destination-flag" aria-hidden="true">
                   <Flag emoji={destination.flag} />
@@ -99,6 +108,9 @@ export default function ExchangeDestinations({
                   <h3>{text(destination.country, locale)}</h3>
                   <span className="destination-region">{regionLabels[destination.region][locale]}</span>
                 </div>
+                {destination.soldOut ? (
+                  <span className="sold-out-badge">{t('Sold out until next season', 'كامل العدد لحد السيزون الجاي')}</span>
+                ) : null}
               </header>
               <div className="destination-badges">
                 {destination.programs.map((key) => (

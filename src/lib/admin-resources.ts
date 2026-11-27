@@ -208,6 +208,7 @@ export const adminResources: Record<string, AdminResource> = {
       { name: 'language_ar', label: 'Language requirement AR', type: 'text' },
       { name: 'notes_en', label: 'Notes EN', type: 'textarea', helper: 'Optional, e.g. number of spots or months available.' },
       { name: 'notes_ar', label: 'Notes AR', type: 'textarea' },
+      { name: 'sold_out', label: 'Sold out until next season', type: 'checkbox', helper: 'Tick when all seats in the current contracts are taken. Untick when new contracts arrive.' },
       { name: 'sort_order', label: 'Sort order', type: 'number' },
       { name: 'published', label: 'Published', type: 'checkbox' },
     ],
