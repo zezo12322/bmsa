@@ -6,6 +6,7 @@ import ActivityGrid, { activityHref } from '@/components/site/ActivityGrid';
 import ActivityBrowser from '@/components/site/ActivityBrowser';
 import ExchangeCountdown from '@/components/site/ExchangeCountdown';
 import { IconFor } from '@/components/site/icons';
+import Flag from '@/components/site/Flag';
 import {
   ArrowLeft,
   ArrowRight,
@@ -289,7 +290,9 @@ export function HomePage({ locale, content }: { locale: Locale; content: BmsaCon
           </div>
           <div className="exchange-teaser-side">
             <span className="exchange-flags" aria-hidden="true">
-              {content.exchangeDestinations.slice(0, 6).map((destination) => destination.flag).join(' ')}
+              {content.exchangeDestinations.slice(0, 6).map((destination) => (
+                <Flag key={destination.slug} emoji={destination.flag} />
+              ))}
             </span>
             <Link className="button primary" href={href(locale, '/exchange')}>
               {locale === 'ar' ? 'اكتشف التبادل' : 'Explore exchange'}

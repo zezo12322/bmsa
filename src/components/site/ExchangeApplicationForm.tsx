@@ -6,6 +6,7 @@ import { submitExchangeApplication, type ExchangeApplicationState } from '@/app/
 import { currentCallState } from '@/lib/exchange-calls';
 import type { ExchangeCall, ExchangeDestination, Locale } from '@/lib/types';
 import { text } from '@/lib/types';
+import Flag from '@/components/site/Flag';
 
 const MAX_DESTINATIONS = 3;
 
@@ -265,7 +266,7 @@ export default function ExchangeApplicationForm({
                     disabled={!checked && picked.length >= MAX_DESTINATIONS}
                     onChange={(event) => toggle(destination.slug, event.target.checked)}
                   />
-                  <span aria-hidden="true">{destination.flag}</span>
+                  <span aria-hidden="true"><Flag emoji={destination.flag} /></span>
                   {text(destination.country, locale)}
                 </label>
               );
