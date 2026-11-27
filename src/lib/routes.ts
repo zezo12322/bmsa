@@ -20,6 +20,13 @@ export function localizePath(locale: Locale, path: string) {
   return path === '/' ? '/ar' : `/ar${path}`;
 }
 
+export type UnitKind = 'committees' | 'divisions';
+
+/** Page of one standing committee or support division, e.g. /ar/committees/scome. */
+export function unitHref(locale: Locale, kind: UnitKind, slug: string) {
+  return localizePath(locale, `/${kind}/${slug}`);
+}
+
 export function pageHref(locale: Locale, key: PageKey) {
   return localizePath(locale, pagePaths[key]);
 }

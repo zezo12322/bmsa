@@ -253,7 +253,7 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
                     {locale === 'ar' ? `انضم إلى ${info?.name}` : `Join ${info?.name}`}
                     <DirectionIcon locale={locale} />
                   </Link>
-                  <Link className="text-link" href={`${href('/committees')}#${program.slug}`}>
+                  <Link className="text-link" href={`${href('/committees')}/${program.slug}`}>
                     {locale === 'ar' ? 'عن اللجنة' : 'About the committee'}
                   </Link>
                 </div>

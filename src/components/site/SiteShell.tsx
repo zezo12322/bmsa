@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Facebook, Globe2, Instagram, Linkedin, Mail, MapPin, Menu, Stethoscope } from 'lucide-react';
 import HtmlLang from '@/components/site/HtmlLang';
 import { siteCopy } from '@/lib/bmsa-data';
-import { pageHref, pagePaths, type PageKey } from '@/lib/routes';
+import { localizePath, pageHref, pagePaths, type PageKey } from '@/lib/routes';
 import type { Locale } from '@/lib/types';
 
 const navKeys = Object.keys(pagePaths) as PageKey[];
@@ -11,15 +11,18 @@ const navKeys = Object.keys(pagePaths) as PageKey[];
 export default function SiteShell({
   locale,
   current,
+  path,
   children,
 }: {
   locale: Locale;
   current: PageKey;
+  /** English path of a detail page (e.g. `/committees/scome`), so the language switch keeps the slug. */
+  path?: string;
   children: React.ReactNode;
 }) {
   const copy = siteCopy[locale];
   const otherLocale: Locale = locale === 'ar' ? 'en' : 'ar';
-  const alternatePath = pageHref(otherLocale, current);
+  const alternatePath = path ? localizePath(otherLocale, path) : pageHref(otherLocale, current);
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   const socials = [

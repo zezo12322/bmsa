@@ -60,7 +60,7 @@ drop policy if exists "Admins manage exchange calls" on public.bmsa_exchange_cal
 create policy "Public read published exchange calls" on public.bmsa_exchange_calls
   for select using (published = true);
 create policy "Admins manage exchange calls" on public.bmsa_exchange_calls
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_exchange_applications: anyone can insert; admins manage/read all; no public reads
 drop policy if exists "Public insert exchange applications" on public.bmsa_exchange_applications;
@@ -68,4 +68,4 @@ drop policy if exists "Admins manage exchange applications" on public.bmsa_excha
 create policy "Public insert exchange applications" on public.bmsa_exchange_applications
   for insert to anon, authenticated with check (true);
 create policy "Admins manage exchange applications" on public.bmsa_exchange_applications
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));

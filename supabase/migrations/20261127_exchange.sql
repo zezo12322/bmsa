@@ -76,11 +76,11 @@ drop policy if exists "Admins manage exchange destinations" on public.bmsa_excha
 create policy "Public read published exchange destinations" on public.bmsa_exchange_destinations
   for select using (published = true);
 create policy "Admins manage exchange destinations" on public.bmsa_exchange_destinations
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 drop policy if exists "Public read published exchange stories" on public.bmsa_exchange_stories;
 drop policy if exists "Admins manage exchange stories" on public.bmsa_exchange_stories;
 create policy "Public read published exchange stories" on public.bmsa_exchange_stories
   for select using (published = true);
 create policy "Admins manage exchange stories" on public.bmsa_exchange_stories
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
