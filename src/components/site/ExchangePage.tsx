@@ -298,7 +298,7 @@ export default function ExchangePage({ locale, content }: { locale: Locale; cont
                   : 'Countries in the latest SCOPE and SCORE contracts. Places and numbers change every exchange cycle.'
             }
           />
-          <ExchangeDestinations locale={locale} destinations={content.exchangeDestinations} />
+          <ExchangeDestinations locale={locale} destinations={content.exchangeDestinations} reviews={content.exchangeReviews} />
         </div>
       </section>
 

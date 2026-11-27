@@ -826,6 +826,8 @@ export const fallbackContent: BmsaContent = {
   exchangeDestinations,
   exchangeStories,
   exchangeCalls,
+  /** Reviews are submitted by returning students and published from the admin panel. */
+  exchangeReviews: [],
   stats,
   /** Opportunities and documents are added from the admin panel; none are invented here. */
   opportunities: [],

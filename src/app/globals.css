@@ -2840,3 +2840,24 @@ button, input, select, textarea { font: inherit; }
   .opportunity-list,
   .glossary-list { grid-template-columns: 1fr; }
 }
+
+/* ── Exchange reviews ── */
+.destination-reviews { border-top: 1px dashed var(--line); padding-top: 10px; }
+.destination-reviews summary { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.88rem; color: var(--muted); }
+.destination-reviews summary svg { color: var(--accent); fill: var(--accent); }
+.destination-reviews summary strong { color: var(--ink); font-size: 1rem; }
+.review-scores { display: grid; gap: 6px; margin: 12px 0 0; }
+.review-scores div { display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: 8px; font-size: 0.84rem; }
+.review-scores dt { color: var(--muted); font-weight: 700; }
+.review-scores dd { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 800; }
+.review-bar { flex: 1; height: 6px; border-radius: 999px; background: linear-gradient(to var(--bar-end, right), var(--accent) calc(var(--score) * 100%), var(--surface-2) 0); }
+[dir="rtl"] .review-bar { --bar-end: left; }
+.destination-reviews blockquote { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); }
+.destination-reviews blockquote p { margin: 0; font-size: 0.88rem; line-height: 1.55; }
+.destination-reviews cite { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78rem; font-style: normal; font-weight: 700; }
+.review-cta { margin: 20px 0 0; color: var(--muted); font-weight: 700; }
+.review-cta a { color: var(--primary); }
+.form-card.review-card { position: static; max-width: 760px; }
+.review-form { display: grid; gap: 14px; }
+.rating-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); }
+.rating-grid legend { padding: 0 6px; color: var(--ink); font-weight: 800; font-size: 0.9rem; }

@@ -6,6 +6,7 @@ import type {
   BmsaContent,
   ExchangeCall,
   ExchangeDestination,
+  ExchangeReview,
   DocumentCategory,
   DocumentItem,
   Opportunity,
@@ -39,6 +40,22 @@ type CmsActivityRow = {
   image_url: string | null;
   icon: string | null;
   sort_order: number | null;
+};
+
+type CmsReviewRow = {
+  id: string;
+  destination_slug: string | null;
+  country: string;
+  program: string;
+  period: string | null;
+  reviewer_name: string | null;
+  rating_overall: number;
+  rating_hosting: number;
+  rating_accommodation: number;
+  rating_budget: number;
+  rating_transport: number;
+  rating_social: number;
+  comment: string | null;
 };
 
 type CmsStatRow = {
@@ -281,6 +298,26 @@ function bilingual(en: string | null | undefined, ar: string | null | undefined)
   return { en: enText, ar: ar || enText };
 }
 
+function mapReview(row: CmsReviewRow): ExchangeReview {
+  return {
+    id: row.id,
+    destinationSlug: row.destination_slug,
+    country: row.country,
+    program: row.program === 'score' ? 'score' : 'scope',
+    period: row.period,
+    reviewerName: row.reviewer_name,
+    ratings: {
+      overall: row.rating_overall,
+      hosting: row.rating_hosting,
+      accommodation: row.rating_accommodation,
+      budget: row.rating_budget,
+      transport: row.rating_transport,
+      social: row.rating_social,
+    },
+    comment: row.comment,
+  };
+}
+
 function mapStat(row: CmsStatRow): Stat {
   return {
     value: row.value,
@@ -385,7 +422,7 @@ async function getPublishedRows<T>(table: string) {
 }
 
 export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
-  const [imageRows, activityRows, newsRows, merchRows, boardRows, destinationRows, storyRows, callRows, statRows, opportunityRows, documentRows] = await Promise.all([
+  const [imageRows, activityRows, newsRows, merchRows, boardRows, destinationRows, storyRows, callRows, reviewRows, statRows, opportunityRows, documentRows] = await Promise.all([
     getPublishedRows<CmsImageRow>('bmsa_images'),
     getPublishedRows<CmsActivityRow>('bmsa_activities'),
     getPublishedRows<CmsNewsRow>('bmsa_news'),
@@ -394,6 +431,7 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     getPublishedRows<CmsDestinationRow>('bmsa_exchange_destinations'),
     getPublishedRows<CmsStoryRow>('bmsa_exchange_stories'),
     getPublishedRows<CmsCallRow>('bmsa_exchange_calls'),
+    getPublishedRows<CmsReviewRow>('bmsa_exchange_reviews'),
     getPublishedRows<CmsStatRow>('bmsa_stats'),
     getPublishedRows<CmsOpportunityRow>('bmsa_opportunities'),
     getPublishedRows<CmsDocumentRow>('bmsa_documents'),
@@ -409,6 +447,7 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
     exchangeDestinations: destinationRows.length ? destinationRows.map(mapDestination) : fallbackContent.exchangeDestinations,
     exchangeStories: storyRows.length ? storyRows.map(mapStory) : fallbackContent.exchangeStories,
     exchangeCalls: callRows.length ? callRows.map(mapCall) : fallbackContent.exchangeCalls,
+    exchangeReviews: reviewRows.map(mapReview),
     stats: statRows.length ? statRows.map(mapStat) : fallbackContent.stats,
     opportunities: opportunityRows.map(mapOpportunity),
     documents: documentRows.map(mapDocument),
