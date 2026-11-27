@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { Facebook, Globe2, Instagram, Linkedin, Mail, MapPin, Menu, Stethoscope } from 'lucide-react';
 import HtmlLang from '@/components/site/HtmlLang';
 import { siteCopy } from '@/lib/bmsa-data';
-import { localizePath, pageHref, pagePaths, type PageKey } from '@/lib/routes';
+import { localizePath, mainNavKeys, pageHref, resourceNavKeys, type PageKey } from '@/lib/routes';
 import type { Locale } from '@/lib/types';
 
-const navKeys = Object.keys(pagePaths) as PageKey[];
+const navKeys = mainNavKeys;
 
 export default function SiteShell({
   locale,
@@ -118,6 +118,17 @@ export default function SiteShell({
             <h3>{locale === 'ar' ? 'روابط سريعة' : 'Quick Links'}</h3>
             <ul className="footer-list">
               {navKeys.map((key) => (
+                <li key={key}>
+                  <Link href={pageHref(locale, key)}>{copy.nav[key]}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3>{locale === 'ar' ? 'مصادر' : 'Resources'}</h3>
+            <ul className="footer-list">
+              {resourceNavKeys.map((key) => (
                 <li key={key}>
                   <Link href={pageHref(locale, key)}>{copy.nav[key]}</Link>
                 </li>

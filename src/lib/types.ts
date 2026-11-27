@@ -132,6 +132,35 @@ export type NewsItem = {
   sortOrder: number;
 };
 
+export type Stat = {
+  value: string;
+  label: LocalizedText;
+  sublabel: LocalizedText;
+};
+
+/** An open call (OC call, team recruitment, delegation...) with a deadline. */
+export type Opportunity = {
+  id: string;
+  title: LocalizedText;
+  body: LocalizedText;
+  tag: LocalizedText;
+  applyUrl?: string | null;
+  /** ISO timestamps (UTC). */
+  opensAt?: string | null;
+  closesAt: string;
+};
+
+export type DocumentCategory = 'bylaws' | 'reports' | 'manuals' | 'forms' | 'other';
+
+export type DocumentItem = {
+  id: string;
+  title: LocalizedText;
+  description: LocalizedText;
+  category: DocumentCategory;
+  year?: number | null;
+  fileUrl: string;
+};
+
 export type BmsaContent = {
   committees: Committee[];
   divisions: Division[];
@@ -142,6 +171,9 @@ export type BmsaContent = {
   exchangeDestinations: ExchangeDestination[];
   exchangeStories: ExchangeStory[];
   exchangeCalls: ExchangeCall[];
+  stats: Stat[];
+  opportunities: Opportunity[];
+  documents: DocumentItem[];
   images: Record<string, string>;
 };
 

@@ -58,7 +58,7 @@ export default function ResourceForm({
                   </select>
                 ) : field.type === 'checkbox' ? (
                   <span className="admin-checkbox">
-                    <input name={field.name} type="checkbox" value="true" defaultChecked={item ? Boolean(value) : true} />
+                    <input name={field.name} type="checkbox" value="true" defaultChecked={item ? Boolean(value) : (field.defaultChecked ?? true)} />
                     Enabled
                   </span>
                 ) : field.type === 'datetime' ? (

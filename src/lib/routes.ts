@@ -1,7 +1,20 @@
 import type { Metadata } from 'next';
 import type { Locale } from './types';
 
-export type PageKey = 'home' | 'about' | 'committees' | 'divisions' | 'activities' | 'news' | 'exchange' | 'merch' | 'join';
+export type PageKey =
+  | 'home'
+  | 'about'
+  | 'committees'
+  | 'divisions'
+  | 'activities'
+  | 'news'
+  | 'exchange'
+  | 'merch'
+  | 'join'
+  | 'opportunities'
+  | 'documents'
+  | 'verify'
+  | 'glossary';
 
 export const pagePaths: Record<PageKey, string> = {
   home: '/',
@@ -13,7 +26,17 @@ export const pagePaths: Record<PageKey, string> = {
   exchange: '/exchange',
   merch: '/merch',
   join: '/join',
+  opportunities: '/opportunities',
+  documents: '/documents',
+  verify: '/verify',
+  glossary: '/glossary',
 };
+
+/** Pages in the header menu. */
+export const mainNavKeys: PageKey[] = ['home', 'about', 'committees', 'divisions', 'activities', 'news', 'exchange', 'merch', 'join'];
+
+/** Pages in the footer "Resources" column. */
+export const resourceNavKeys: PageKey[] = ['opportunities', 'documents', 'verify', 'glossary'];
 
 /** Prefixes an English path with `/ar` for Arabic pages. */
 export function localizePath(locale: Locale, path: string) {
@@ -72,6 +95,22 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
       title: 'Join BMSA',
       description: 'Apply to become a BMSA Benisuef member and choose the committee that fits you.',
     },
+    opportunities: {
+      title: 'Opportunities',
+      description: 'Open calls at BMSA Benisuef: organizing committees, team recruitment, delegations, and their deadlines.',
+    },
+    documents: {
+      title: 'Documents',
+      description: 'Bylaws, reports, manuals, and forms of BMSA Benisuef.',
+    },
+    verify: {
+      title: 'Verify a certificate',
+      description: 'Check that a BMSA Benisuef certificate is genuine using its certificate code.',
+    },
+    glossary: {
+      title: 'Glossary',
+      description: 'The abbreviations used in IFMSA and BMSA Benisuef, explained: SCOPE, LEO, NMO, CA, and more.',
+    },
   },
   ar: {
     home: {
@@ -111,6 +150,22 @@ const pageMeta: Record<Locale, Record<PageKey, { title: string; description: str
     join: {
       title: 'انضم إلى بمسا',
       description: 'قدّم طلب عضوية في بمسا بني سويف واختر اللجنة المناسبة لك.',
+    },
+    opportunities: {
+      title: 'الفرص المفتوحة',
+      description: 'الفرص المفتوحة في بمسا بني سويف: اللجان المنظمة، الانضمام للتيمات، الوفود، ومواعيد التقديم.',
+    },
+    documents: {
+      title: 'الملفات والوثائق',
+      description: 'اللائحة والتقارير والأدلة والنماذج الخاصة ببمسا بني سويف.',
+    },
+    verify: {
+      title: 'التحقق من شهادة',
+      description: 'اتأكد إن شهادة بمسا بني سويف حقيقية باستخدام كود الشهادة.',
+    },
+    glossary: {
+      title: 'قاموس الاختصارات',
+      description: 'شرح الاختصارات المستخدمة في IFMSA وبمسا بني سويف: SCOPE وLEO وNMO وCA وغيرها.',
     },
   },
 };
