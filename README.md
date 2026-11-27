@@ -67,7 +67,7 @@ npm install
 
 The script creates all tables, functions, RLS policies, indexes, triggers, a storage bucket, and inserts seed demo data. It is fully idempotent — safe to run multiple times.
 
-> **Existing databases:** also run `supabase/migrations/20261127_division_activities.sql` (activities owned by divisions) `supabase/migrations/20261127_exchange.sql` (Exchange page tables), and `supabase/migrations/20261128_exchange_applications.sql` (exchange countdown + pre-applications), in that order.
+> **Existing databases:** also run `supabase/migrations/20261127_division_activities.sql` (activities owned by divisions) `supabase/migrations/20261127_exchange.sql` (Exchange page tables), `supabase/migrations/20261128_exchange_applications.sql` (exchange countdown + pre-applications), and `supabase/migrations/20261127_admin_policies_authenticated.sql` (admin policies for signed-in users only), in that order.
 >
 > **Org structure:** to apply the current org structure (Executive Board + Team of Officials split into Standing Committee Officers and Support Division Directors) without re-seeding demo rows, run `supabase/migrations/20261009_org_structure.sql` instead.
 

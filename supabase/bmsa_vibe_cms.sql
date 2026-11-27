@@ -141,12 +141,15 @@ begin
 end;
 $$;
 
--- Allow anon and authenticated roles to call is_admin via supabase.rpc()
-grant execute on function public.is_admin(uuid) to anon, authenticated;
+-- Only signed-in users call is_admin (admin pages and the admin RLS policies,
+-- which are scoped to authenticated so anonymous reads never evaluate it).
+revoke execute on function public.is_admin(uuid) from public, anon;
+grant execute on function public.is_admin(uuid) to authenticated;
 
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -202,9 +205,9 @@ alter table public.bmsa_merch_orders enable row level security;
 drop policy if exists "Admins can read admin_users" on public.admin_users;
 drop policy if exists "Admins can manage admin_users" on public.admin_users;
 create policy "Admins can read admin_users" on public.admin_users
-  for select using (public.is_admin(auth.uid()));
+  for select to authenticated using (public.is_admin(auth.uid()));
 create policy "Admins can manage admin_users" on public.admin_users
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_images: public can read published; admins manage all
 drop policy if exists "Public read published images" on public.bmsa_images;
@@ -212,7 +215,7 @@ drop policy if exists "Admins manage images" on public.bmsa_images;
 create policy "Public read published images" on public.bmsa_images
   for select using (published = true);
 create policy "Admins manage images" on public.bmsa_images
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_activities: public can read published; admins manage all
 drop policy if exists "Public read published activities" on public.bmsa_activities;
@@ -220,7 +223,7 @@ drop policy if exists "Admins manage activities" on public.bmsa_activities;
 create policy "Public read published activities" on public.bmsa_activities
   for select using (published = true);
 create policy "Admins manage activities" on public.bmsa_activities
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_merch_items: public can read published; admins manage all
 drop policy if exists "Public read published merch" on public.bmsa_merch_items;
@@ -228,7 +231,7 @@ drop policy if exists "Admins manage merch" on public.bmsa_merch_items;
 create policy "Public read published merch" on public.bmsa_merch_items
   for select using (published = true);
 create policy "Admins manage merch" on public.bmsa_merch_items
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_board_members: public can read published; admins manage all
 drop policy if exists "Public read published board" on public.bmsa_board_members;
@@ -236,7 +239,7 @@ drop policy if exists "Admins manage board" on public.bmsa_board_members;
 create policy "Public read published board" on public.bmsa_board_members
   for select using (published = true);
 create policy "Admins manage board" on public.bmsa_board_members
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_membership_applications: anyone can insert; admins manage/read all; no public reads
 drop policy if exists "Public insert applications" on public.bmsa_membership_applications;
@@ -244,7 +247,7 @@ drop policy if exists "Admins manage applications" on public.bmsa_membership_app
 create policy "Public insert applications" on public.bmsa_membership_applications
   for insert to anon, authenticated with check (true);
 create policy "Admins manage applications" on public.bmsa_membership_applications
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_merch_orders: anyone can insert; admins manage/read all; no public reads
 drop policy if exists "Public insert merch orders" on public.bmsa_merch_orders;
@@ -252,7 +255,7 @@ drop policy if exists "Admins manage merch orders" on public.bmsa_merch_orders;
 create policy "Public insert merch orders" on public.bmsa_merch_orders
   for insert to anon, authenticated with check (true);
 create policy "Admins manage merch orders" on public.bmsa_merch_orders
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- ── Exchange page: destinations and stories ───────────────────────────────────
 
@@ -327,14 +330,14 @@ drop policy if exists "Admins manage exchange destinations" on public.bmsa_excha
 create policy "Public read published exchange destinations" on public.bmsa_exchange_destinations
   for select using (published = true);
 create policy "Admins manage exchange destinations" on public.bmsa_exchange_destinations
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 drop policy if exists "Public read published exchange stories" on public.bmsa_exchange_stories;
 drop policy if exists "Admins manage exchange stories" on public.bmsa_exchange_stories;
 create policy "Public read published exchange stories" on public.bmsa_exchange_stories
   for select using (published = true);
 create policy "Admins manage exchange stories" on public.bmsa_exchange_stories
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- ── Exchange calls (countdown) and pre-applications ───────────────────────────
 
@@ -393,7 +396,7 @@ drop policy if exists "Admins manage exchange calls" on public.bmsa_exchange_cal
 create policy "Public read published exchange calls" on public.bmsa_exchange_calls
   for select using (published = true);
 create policy "Admins manage exchange calls" on public.bmsa_exchange_calls
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- bmsa_exchange_applications: anyone can insert; admins manage/read all; no public reads
 drop policy if exists "Public insert exchange applications" on public.bmsa_exchange_applications;
@@ -401,7 +404,7 @@ drop policy if exists "Admins manage exchange applications" on public.bmsa_excha
 create policy "Public insert exchange applications" on public.bmsa_exchange_applications
   for insert to anon, authenticated with check (true);
 create policy "Admins manage exchange applications" on public.bmsa_exchange_applications
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+  for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 
 -- ── Storage bucket ────────────────────────────────────────────────────────────
 
@@ -694,7 +697,7 @@ values
     'eb', 'Secretary General', 'الأمين العام',
     'Executive Board', 'المجلس التنفيذي',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#b7950b,#d4ac0d)', 3
+    'linear-gradient(135deg,#b03a2e,#f5a623)', 3
   ),
   -- Team of Officials (TO): Standing Committee Officers
   (
@@ -731,7 +734,7 @@ values
     'to', 'SCORP Officer', 'مسؤول SCORP',
     'Standing Committee Officer', 'مسؤول لجنة دائمة',
     'TBD', 'يُعلن لاحقاً',
-    'linear-gradient(135deg,#495057,#adb5bd)', 9
+    'linear-gradient(135deg,#0c8599,#66d9e8)', 9
   ),
   -- Team of Officials (TO): Support Division Directors
   (
