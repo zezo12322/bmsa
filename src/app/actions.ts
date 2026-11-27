@@ -162,3 +162,65 @@ export async function submitExchangeApplication(
     callTitle: call ? { en: call.title_en, ar: call.title_ar || call.title_en } : undefined,
   };
 }
+
+export type ExchangeReviewState = {
+  status: 'idle' | 'success' | 'error';
+  error?: 'cms' | 'invalid' | 'submit';
+};
+
+const REVIEW_RATINGS = ['overall', 'hosting', 'accommodation', 'budget', 'transport', 'social'] as const;
+
+export async function submitExchangeReview(_prev: ExchangeReviewState, formData: FormData): Promise<ExchangeReviewState> {
+  // Honeypot: real visitors never see or fill this field.
+  if (clean(formData.get('website'))) return { status: 'success' };
+
+  const supabase = createPublicSupabaseClient();
+  if (!supabase) return { status: 'error', error: 'cms' };
+
+  const ratings: Record<string, number> = {};
+  for (const key of REVIEW_RATINGS) {
+    const value = Number(formData.get(`rating_${key}`));
+    if (!Number.isInteger(value) || value < 1 || value > 5) return { status: 'error', error: 'invalid' };
+    ratings[`rating_${key}`] = value;
+  }
+
+  const program = clean(formData.get('program'));
+  if (!['scope', 'score'].includes(program) || formData.get('consent') !== 'yes') {
+    return { status: 'error', error: 'invalid' };
+  }
+
+  // A listed destination is checked against the published list; anything else is stored as free text.
+  const slug = clean(formData.get('destination'));
+  let destinationSlug: string | null = null;
+  let country = limit(clean(formData.get('country_other')), 80);
+  if (slug && slug !== 'other') {
+    const { data } = await supabase
+      .from('bmsa_exchange_destinations')
+      .select('slug, country_en')
+      .eq('published', true)
+      .eq('slug', slug)
+      .limit(1);
+    const row = (data as { slug: string; country_en: string }[] | null)?.[0];
+    if (!row) return { status: 'error', error: 'invalid' };
+    destinationSlug = row.slug;
+    country = row.country_en;
+  }
+  if (!country) return { status: 'error', error: 'invalid' };
+
+  const { error } = await supabase.from('bmsa_exchange_reviews').insert({
+    destination_slug: destinationSlug,
+    country,
+    program,
+    period: limit(clean(formData.get('period')), 60) || null,
+    reviewer_name: limit(clean(formData.get('reviewer_name')), 80) || null,
+    comment: limit(clean(formData.get('comment')), 1500) || null,
+    ...ratings,
+    published: false,
+  });
+  if (error) {
+    console.warn('Exchange review failed:', error.message);
+    return { status: 'error', error: 'submit' };
+  }
+
+  return { status: 'success' };
+}

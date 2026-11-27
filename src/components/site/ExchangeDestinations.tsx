@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Building2, Languages, MapPin, Stethoscope } from 'lucide-react';
-import type { ExchangeDestination, ExchangeProgram, ExchangeRegion, Locale } from '@/lib/types';
+import Link from 'next/link';
+import { Building2, Languages, MapPin, Star, Stethoscope } from 'lucide-react';
+import type { ExchangeDestination, ExchangeProgram, ExchangeRegion, ExchangeReview, Locale } from '@/lib/types';
 import { text } from '@/lib/types';
 import Flag from '@/components/site/Flag';
+import { localizePath } from '@/lib/routes';
+import { reviewCategories, summarizeReviews } from '@/lib/review-categories';
 
 const programInfo: Record<ExchangeProgram, { label: string; color: string; en: string; ar: string }> = {
   scope: { label: 'SCOPE', color: '#0a84c6', en: 'Clinical', ar: 'إكلينيكي' },
@@ -32,10 +35,13 @@ export function ProgramBadge({ program, locale }: { program: ExchangeProgram; lo
 export default function ExchangeDestinations({
   locale,
   destinations,
+  reviews = [],
 }: {
   locale: Locale;
   destinations: ExchangeDestination[];
+  reviews?: ExchangeReview[];
 }) {
+  const summaries = summarizeReviews(reviews);
   const [program, setProgram] = useState<'all' | ExchangeProgram>('all');
   const [region, setRegion] = useState<'all' | ExchangeRegion>('all');
 
@@ -138,12 +144,56 @@ export default function ExchangeDestinations({
                 ) : null}
               </ul>
               {text(destination.notes, locale) ? <p className="destination-notes">{text(destination.notes, locale)}</p> : null}
+              {(() => {
+                const summary = summaries.get(destination.slug);
+                if (!summary) return null;
+                return (
+                  <details className="destination-reviews">
+                    <summary>
+                      <Star size={16} aria-hidden="true" />
+                      <strong>{summary.averages.overall.toFixed(1)}</strong>
+                      <span>
+                        {locale === 'ar'
+                          ? `${summary.count} تقييم من طلبة سافروا`
+                          : `${summary.count} review${summary.count === 1 ? '' : 's'} from returning students`}
+                      </span>
+                    </summary>
+                    <dl className="review-scores">
+                      {reviewCategories.map((category) => (
+                        <div key={category.key}>
+                          <dt>{text(category.label, locale)}</dt>
+                          <dd>
+                            <span className="review-bar" style={{ '--score': summary.averages[category.key] / 5 } as React.CSSProperties} />
+                            {summary.averages[category.key].toFixed(1)}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                    {summary.reviews
+                      .filter((review) => review.comment)
+                      .map((review) => (
+                        <blockquote key={review.id}>
+                          <p>{review.comment}</p>
+                          <cite>
+                            {review.reviewerName || (locale === 'ar' ? 'طالب' : 'Student')}
+                            {review.period ? ` · ${review.period}` : ''} · {review.program.toUpperCase()}
+                          </cite>
+                        </blockquote>
+                      ))}
+                  </details>
+                );
+              })()}
             </article>
           ))}
         </div>
       ) : (
         <p className="empty-state">{t('No destinations match these filters.', 'لا توجد وجهات تطابق هذا الاختيار.')}</p>
       )}
+
+      <p className="review-cta">
+        {t('Went on exchange?', 'سافرت تبادل قبل كده؟')}{' '}
+        <Link href={localizePath(locale, '/exchange/review')}>{t('Rate your destination', 'قيّم الدولة اللي سافرتها')}</Link>
+      </p>
     </div>
   );
 }

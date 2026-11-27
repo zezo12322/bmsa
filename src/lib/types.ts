@@ -132,6 +132,20 @@ export type NewsItem = {
   sortOrder: number;
 };
 
+export type ReviewCategory = 'overall' | 'hosting' | 'accommodation' | 'budget' | 'transport' | 'social';
+
+/** A returning student's rating of their exchange destination (published by an admin). */
+export type ExchangeReview = {
+  id: string;
+  destinationSlug?: string | null;
+  country: string;
+  program: ExchangeProgram;
+  period?: string | null;
+  reviewerName?: string | null;
+  ratings: Record<ReviewCategory, number>;
+  comment?: string | null;
+};
+
 export type Stat = {
   value: string;
   label: LocalizedText;
@@ -171,6 +185,7 @@ export type BmsaContent = {
   exchangeDestinations: ExchangeDestination[];
   exchangeStories: ExchangeStory[];
   exchangeCalls: ExchangeCall[];
+  exchangeReviews: ExchangeReview[];
   stats: Stat[];
   opportunities: Opportunity[];
   documents: DocumentItem[];

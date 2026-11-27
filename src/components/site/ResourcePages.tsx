@@ -1,6 +1,7 @@
 import { BadgeCheck, FileText, SearchX } from 'lucide-react';
 import { PageHero } from '@/components/site/Pages';
 import OpportunityList from '@/components/site/OpportunityList';
+import ExchangeReviewForm from '@/components/site/ExchangeReviewForm';
 import type { BmsaContent, DocumentCategory, Locale, LocalizedText } from '@/lib/types';
 import { text } from '@/lib/types';
 
@@ -255,6 +256,30 @@ export function GlossaryPage({ locale, content }: { locale: Locale; content: Bms
               </div>
             ))}
           </dl>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export function ExchangeReviewPage({ locale, content }: { locale: Locale; content: BmsaContent }) {
+  return (
+    <main>
+      <PageHero
+        locale={locale}
+        badge={say(locale, 'Exchange', 'التبادل')}
+        title={say(locale, 'Rate your exchange', 'قيّم تجربة التبادل')}
+        lead={say(
+          locale,
+          'Back from SCOPE or SCORE? Rate your destination so the next students know what to expect. Reviews are read by the team before they appear.',
+          'رجعت من SCOPE أو SCORE؟ قيّم الدولة اللي سافرتها عشان اللي بعدك يعرفوا يتوقعوا إيه. الفريق بيقرا التقييمات قبل ما تظهر.',
+        )}
+      />
+      <section className="site-section">
+        <div className="site-container">
+          <div className="form-card review-card">
+            <ExchangeReviewForm locale={locale} destinations={content.exchangeDestinations} />
+          </div>
         </div>
       </section>
     </main>
