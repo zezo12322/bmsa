@@ -102,6 +102,7 @@ type CmsDestinationRow = {
   language_ar: string | null;
   notes_en: string | null;
   notes_ar: string | null;
+  sold_out: boolean | null;
   sort_order: number | null;
 };
 
@@ -260,6 +261,7 @@ function mapDestination(row: CmsDestinationRow): ExchangeDestination {
     fields: bilingual(row.fields_en, row.fields_ar),
     language: bilingual(row.language_en, row.language_ar),
     notes: bilingual(row.notes_en, row.notes_ar),
+    soldOut: Boolean(row.sold_out),
     sortOrder: row.sort_order || 0,
   };
 }

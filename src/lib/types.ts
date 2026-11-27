@@ -87,6 +87,8 @@ export type ExchangeDestination = {
   fields: LocalizedText;
   language: LocalizedText;
   notes: LocalizedText;
+  /** All seats in the current contracts are taken until the next season. */
+  soldOut?: boolean;
   sortOrder: number;
 };
 
