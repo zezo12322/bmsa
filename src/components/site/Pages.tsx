@@ -29,6 +29,7 @@ import { localizePath } from '@/lib/routes';
 import { submitMembershipApplication } from '@/app/actions';
 import type { Activity, BmsaContent, Locale, NewsItem, OrgUnit } from '@/lib/types';
 import { text } from '@/lib/types';
+import { activityGroupKey, activityTag, uniqueActivities } from '@/lib/activity-groups';
 
 type NoticeParams = Record<string, string | string[] | undefined>;
 
@@ -159,7 +160,7 @@ export function CtaBand({ locale }: { locale: Locale }) {
 
 export function HomePage({ locale, content }: { locale: Locale; content: BmsaContent }) {
   const copy = siteCopy[locale];
-  const featuredActivities = content.activities.slice(0, 3);
+  const featuredActivities = uniqueActivities(content.activities).slice(0, 3);
 
   return (
     <main>
@@ -731,8 +732,8 @@ export function ActivityDetailPage({
 }) {
   const isDivision = content.divisions.some((item) => item.slug === activity.committee);
   const committee: OrgUnit | undefined = [...content.committees, ...content.divisions].find((item) => item.slug === activity.committee);
-  const related = content.activities
-    .filter((item) => item.slug !== activity.slug)
+  const related = uniqueActivities(content.activities)
+    .filter((item) => activityGroupKey(item) !== activityGroupKey(activity))
     .sort((a, b) => Number(b.committee === activity.committee) - Number(a.committee === activity.committee))
     .slice(0, 3);
   const Back = locale === 'ar' ? ArrowRight : ArrowLeft;
@@ -745,7 +746,7 @@ export function ActivityDetailPage({
             <Back size={16} />
             {locale === 'ar' ? 'كل الأنشطة' : 'All activities'}
           </Link>
-          <span className="eyebrow">{text(activity.tag, locale)}</span>
+          <span className="eyebrow">{activityTag(activity, locale)}</span>
           <h1>{text(activity.title, locale)}</h1>
           <p>{text(activity.excerpt, locale)}</p>
         </div>

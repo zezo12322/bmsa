@@ -39,6 +39,8 @@ export type Activity = {
   imageUrl?: string | null;
   icon: string;
   sortOrder: number;
+  /** Every committee/division running this activity (see lib/activity-groups). */
+  committees?: string[];
 };
 
 export type MerchItem = {

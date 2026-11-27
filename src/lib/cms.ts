@@ -13,6 +13,7 @@ import type {
   NewsItem,
 } from './types';
 import { createPublicSupabaseClient } from '@/utils/supabase/public';
+import { withGroupCommittees } from './activity-groups';
 
 type CmsImageRow = {
   key: string;
@@ -327,7 +328,7 @@ export const getBmsaContent = cache(async (): Promise<BmsaContent> => {
   return {
     committees: fallbackContent.committees,
     divisions: fallbackContent.divisions,
-    activities: activityRows.length ? activityRows.map(mapActivity) : fallbackContent.activities,
+    activities: withGroupCommittees(activityRows.length ? activityRows.map(mapActivity) : fallbackContent.activities),
     news: newsRows.map(mapNews),
     merchItems: merchRows.length ? merchRows.map(mapMerch) : fallbackContent.merchItems,
     boardMembers: boardRows.length ? boardRows.map(mapBoard) : fallbackContent.boardMembers,
